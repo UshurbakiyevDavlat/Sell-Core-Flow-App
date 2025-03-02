@@ -1,0 +1,15 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${IMGPROXY_DOMAIN};
+
+    location / {
+        resolver 127.0.0.11 valid=30s;
+        set $upstream http://imgproxy:8080;
+        proxy_pass $upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}

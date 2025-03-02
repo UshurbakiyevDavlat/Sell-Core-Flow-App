@@ -1,4 +1,15 @@
 services:
+  http:
+    image: nginx:1.27.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/templates
+    env_file:
+      - .env
+    networks:
+      - core_network
+
   app:
     build:
       context: app
