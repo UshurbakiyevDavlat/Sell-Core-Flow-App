@@ -1,6 +1,6 @@
 # Sell-Core-Flow-App
 
-SellCoreFlow - это платформа для бэктестинга (Backtesting) торговых стратегий, построенная на Laravel 11.  
+SellCoreFlow - это платформа для бэктестинга (Backtesting) торговых стратегий, построенная на Laravel 10.  
 Она позволяет тестировать стратегии на исторических данных, используя Redis, Kafka, Elasticsearch и PostgreSQL.
 
 ## Функциональность
