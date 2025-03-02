@@ -4,6 +4,7 @@ SellCoreFlow - это платформа для бэктестинга (Backtest
 Она позволяет тестировать стратегии на исторических данных, используя Redis, Kafka, Elasticsearch и PostgreSQL.
 
 ## Функциональность
+✅ Архитектур по модулям 
 ✅ Поддержка SMA, EMA, RSI, MACD  
 ✅ Интеграция с Yahoo Finance / Binance API  
 ✅ Асинхронная обработка через Kafka  
