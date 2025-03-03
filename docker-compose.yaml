@@ -1,15 +1,4 @@
 services:
-  http:
-    image: nginx:1.27.3
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/templates
-    env_file:
-      - .env
-    networks:
-      - core_network
-
   app:
     build:
       context: app
@@ -22,9 +11,23 @@ services:
     depends_on:
       - db
       - redis
+    expose:
+      - 9000
     networks:
       - core_network
 
+  http:
+    image: nginx:1.27.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/templates
+    env_file:
+      - .env
+    depends_on:
+      - app
+    networks:
+      - core_network
   db:
     image: postgres:15
     container_name: postgres_db
