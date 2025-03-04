@@ -5,6 +5,7 @@ namespace AppModules\Auth\Http\Controllers;
 use AppModules\Auth\Http\Requests\LoginRequest;
 use AppModules\Auth\Http\Requests\RegisterRequest;
 use AppModules\Auth\Http\Resources\UserResource;
+use AppModules\Auth\Models\User;
 use AppModules\Auth\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -43,5 +44,14 @@ readonly class AuthController
             'user' => new UserResource($userData['user']),
             'token' => $userData['token'],
         ]);
+    }
+
+    public function logout(): JsonResponse
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $user->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Вы успешно вышли']);
     }
 }
