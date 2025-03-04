@@ -2,9 +2,9 @@
 
 namespace AppModules\Auth\Repositories;
 
+use App\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\DTO\UserDTO;
 use AppModules\Auth\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
@@ -19,8 +19,8 @@ class UserRepository
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']), //todo add eloquent auto casting
-            'status' => 'active' //todo add enums
+            'password' => $data['password'],
+            'status' => UserStatusEnum::Active,
         ]);
 
         return UserDTO::fromModel($user);

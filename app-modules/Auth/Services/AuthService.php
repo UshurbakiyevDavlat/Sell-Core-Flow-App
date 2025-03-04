@@ -6,7 +6,6 @@ use AppModules\Auth\Models\User;
 use AppModules\Auth\Repositories\UserRepository;
 use AppModules\Auth\DTO\UserDTO;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AuthService

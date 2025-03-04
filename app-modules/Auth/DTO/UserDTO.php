@@ -2,6 +2,7 @@
 
 namespace AppModules\Auth\DTO;
 
+use App\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Models\User;
 
 class UserDTO
@@ -11,7 +12,7 @@ class UserDTO
         public string $name,
         public string $email,
         public string $password,
-        public string $status
+        public UserStatusEnum $status
     ) {}
 
     public static function fromModel(User $user): self

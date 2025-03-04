@@ -2,8 +2,12 @@
 
 namespace AppModules\Auth\Http\Controllers;
 
+use AppModules\Auth\Http\Requests\LoginRequest;
+use AppModules\Auth\Http\Requests\RegisterRequest;
+use AppModules\Auth\Http\Resources\UserResource;
 use AppModules\Auth\Services\AuthService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 readonly class AuthController
 {
@@ -14,24 +18,30 @@ readonly class AuthController
         $this->authService = $authService;
     }
 
-    public function register(Request $request) //todo add request classes
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $data = $request->validated();
 
-        return response()->json($this->authService->register($request->all())); //todo add resources
+        $userData = $this->authService->register($data);
+
+        return response()->json([
+            'user' => new UserResource($userData['user']),
+            'token' => $userData['token']
+        ]);
     }
 
-    public function login(Request $request)
+    /**
+     * @throws ValidationException
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $data = $request->validated();
 
-        return response()->json($this->authService->login($request->only('email', 'password')));
+        $userData = $this->authService->login($data);
+
+        return response()->json([
+            'user' => new UserResource($userData['user']),
+            'token' => $userData['token'],
+        ]);
     }
 }
