@@ -14,12 +14,6 @@ class UserRepository
         return $user ? UserDTO::fromModel($user) : null;
     }
 
-    public function findById(int $id): ?UserDTO
-    {
-        $user = User::find($id);
-        return $user ? UserDTO::fromModel($user) : null;
-    }
-
     public function create(array $data): UserDTO
     {
         $user = User::create([

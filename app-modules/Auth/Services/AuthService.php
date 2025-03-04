@@ -2,10 +2,12 @@
 
 namespace AppModules\Auth\Services;
 
+use AppModules\Auth\Models\User;
 use AppModules\Auth\Repositories\UserRepository;
 use AppModules\Auth\DTO\UserDTO;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AuthService
 {
@@ -26,6 +28,9 @@ class AuthService
         ];
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function login(array $credentials): array
     {
         $userDTO = $this->userRepository->findByEmail($credentials['email']);
@@ -44,7 +49,14 @@ class AuthService
 
     protected function generateToken(UserDTO $userDTO): string
     {
-        return PersonalAccessToken::createToken($userDTO->id, ['*'])->plainTextToken;
+        /** @var User $user */
+        $user = User::find($userDTO->id);
+
+        if (!$user) {
+            throw new NotFoundHttpException();
+        }
+
+        return $user->createToken('auth_token')->plainTextToken;
     }
 }
 
