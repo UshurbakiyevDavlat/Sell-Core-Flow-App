@@ -3,10 +3,13 @@
 namespace AppModules\Auth\Models;
 
 use App\Concerns\Enums\Auth\UserStatusEnum;
-use AppModules\Auth\Database\factories\UserFactory;
+use AppModules\Auth\Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -18,16 +21,25 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static find(int $id)
  * @method static create(array $array)
  */
-class User extends Model
+class User extends Authenticatable implements AuthorizableContract
 {
+    use Authorizable;
     use HasApiTokens;
     use HasFactory;
+    use HasRoles;
+
+    protected string $guard_name = 'api';
 
     protected $fillable = [
       'name',
       'email',
       'password',
       'status',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     public function casts(): array

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppModules\Auth\Database\factories;
+namespace AppModules\Auth\Database\Factories;
 
 use App\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Models\User;
