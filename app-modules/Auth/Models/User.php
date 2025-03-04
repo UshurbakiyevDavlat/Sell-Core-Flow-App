@@ -3,6 +3,8 @@
 namespace AppModules\Auth\Models;
 
 use App\Concerns\Enums\Auth\UserStatusEnum;
+use AppModules\Auth\Database\factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -19,6 +21,8 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Model
 {
     use HasApiTokens;
+    use HasFactory;
+
     protected $fillable = [
       'name',
       'email',
@@ -32,5 +36,10 @@ class User extends Model
             'password' => 'hashed',
             'status' => UserStatusEnum::class,
         ];
+    }
+
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
     }
 }

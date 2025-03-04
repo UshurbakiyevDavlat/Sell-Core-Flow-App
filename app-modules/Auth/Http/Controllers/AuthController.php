@@ -27,7 +27,7 @@ readonly class AuthController
         return response()->json([
             'user' => new UserResource($userData['user']),
             'token' => $userData['token']
-        ]);
+        ], 201);
     }
 
     /**
