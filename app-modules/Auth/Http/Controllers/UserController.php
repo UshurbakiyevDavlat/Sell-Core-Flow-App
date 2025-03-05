@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController
 {
-    public function getAll(): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
         $users = User::query()->paginate(10);
         return UserResource::collection($users);

@@ -20,14 +20,15 @@ class RolePermissionSeeder extends Seeder
 
         // Создаём разрешения с guard
         $permissions = [
-            'manage_users',
-            'manage_roles',
-            'view_orders',
-            'create_orders',
-            'update_orders',
-            'delete_orders',
-            'view_trades',
-            'execute_trades',
+            'manage_users',    // Управление пользователями (создание, удаление, обновление)
+            'manage_roles',    // Управление ролями и разрешениями
+            'manage_assets',   // Управление активами (добавление, редактирование, удаление)
+            'view_orders',     // Просмотр ордеров
+            'create_orders',   // Создание ордеров
+            'update_orders',   // Обновление ордеров
+            'delete_orders',   // Удаление ордеров
+            'view_trades',     // Просмотр сделок
+            'execute_trades',  // Исполнение сделок
         ];
 
         foreach ($permissions as $permission) {

@@ -5,7 +5,7 @@ namespace AppModules\Auth\DTO;
 use App\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Models\User;
 
-class UserDTO
+readonly class UserDTO
 {
     public function __construct(
         public int $id,

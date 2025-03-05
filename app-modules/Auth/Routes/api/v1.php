@@ -29,7 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'getAll']);
+        Route::get('/', [UserController::class, 'index']);
         Route::get('me', [UserController::class, 'me']);
     });
 
