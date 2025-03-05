@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Concerns\Enums\Auth;
+namespace AppModules\Auth\Concerns\Enums\Auth;
 
 use App\Concerns\Traits\HasKeys;
 

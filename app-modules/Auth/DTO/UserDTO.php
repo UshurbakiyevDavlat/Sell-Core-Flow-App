@@ -2,7 +2,7 @@
 
 namespace AppModules\Auth\DTO;
 
-use App\Concerns\Enums\Auth\UserStatusEnum;
+use AppModules\Auth\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Models\User;
 
 readonly class UserDTO

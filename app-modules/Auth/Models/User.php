@@ -2,7 +2,7 @@
 
 namespace AppModules\Auth\Models;
 
-use App\Concerns\Enums\Auth\UserStatusEnum;
+use AppModules\Auth\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int $id
  * @property string $name
  * @property string $password
- * @property UserStatusEnum $status
+ * @property \AppModules\Auth\Concerns\Enums\Auth\UserStatusEnum $status
  * @property string $email
  * @method static where(string $string, string $email)
  * @method static find(int $id)

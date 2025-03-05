@@ -2,7 +2,7 @@
 
 namespace AppModules\Auth\Database\Factories;
 
-use App\Concerns\Enums\Auth\UserStatusEnum;
+use AppModules\Auth\Concerns\Enums\Auth\UserStatusEnum;
 use AppModules\Auth\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
