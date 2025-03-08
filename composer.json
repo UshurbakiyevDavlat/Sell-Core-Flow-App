@@ -44,6 +44,7 @@
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/iso3166": "^4.3",
+        "mateusjunges/laravel-kafka": "^2.5",
         "predis/predis": "^2.3",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-ray": "^1.39"

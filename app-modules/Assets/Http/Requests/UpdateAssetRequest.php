@@ -13,8 +13,7 @@ class UpdateAssetRequest extends FormRequest
         return [
             'symbol' => ['required', 'string', Rule::unique('assets', 'symbol'), 'max:10'],
             'name' => ['required', 'string', 'max:100'],
-            'type' => ['required', 'string', Rule::in(AssetTypeEnum::keys())],
-            'price' => ['required', 'numeric', 'min:0'],
+            'type' => ['required', 'string', Rule::in(AssetTypeEnum::cases())],
         ];
     }
 }

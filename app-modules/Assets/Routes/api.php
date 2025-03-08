@@ -9,4 +9,4 @@ Route::prefix('api/assets')
         Route::prefix('v1')
             ->group(base_path('app-modules/Assets/Routes/api/v1.php'));
     })
-    ->middleware(['api', 'auth:sanctum']);
+    ->middleware(['api']);

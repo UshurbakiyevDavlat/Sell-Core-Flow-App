@@ -51,8 +51,20 @@ class AssetRepository
 
         $asset->delete();
         Cache::forget("asset_$id");
-        Cache::forget("assets_list_page_10");
+        Cache::forget("assets_list_page_10");//todo сделать без хардкода
 
         return true;
     }
+
+    public function getAssetsByIds(array $ids): array
+    {
+        return Cache::remember("assets_" . implode('_', $ids), 60, function () use ($ids) {
+            return Asset::query()
+                ->whereIn('id', $ids)
+                ->get()
+                ->map(fn(Asset $asset) => AssetDTO::fromModel($asset))
+                ->toArray();
+        });
+    }
+
 }

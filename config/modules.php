@@ -1,8 +1,7 @@
 <?php
 
+use App\Concerns\ModulesEnum;
+
 return [
-    'enabled' => [
-        'Auth',
-        'Assets',
-    ]
+    'enabled' => ModulesEnum::getEnabledModules(),
 ];
