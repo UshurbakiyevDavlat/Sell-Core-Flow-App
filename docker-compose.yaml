@@ -12,6 +12,8 @@ services:
     image: bitnami/kafka:latest
     container_name: kafka
     restart: unless-stopped
+    volumes:
+      - ./docker/create-kafka-topics.sh:/docker/create-kafka-topics.sh
     ports:
       - "9092:9092"
     environment:
@@ -22,12 +24,13 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
     depends_on:
       - zookeeper
+    entrypoint: [ "bin/bash",  "/docker/create-kafka-topics.sh" ]
     networks:
       - core_network
   app:
     build:
-      context: app
-      dockerfile: ../Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
     working_dir: /var/www
@@ -36,10 +39,13 @@ services:
     depends_on:
       - db
       - redis
+      - kafka
     expose:
-      - 9000
+      - 9000:9000
     networks:
       - core_network
+    env_file:
+      - .env
 
   http:
     image: nginx:1.27.3
