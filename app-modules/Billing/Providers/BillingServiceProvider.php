@@ -2,7 +2,7 @@
 
 namespace AppModules\Billing\Providers;
 
-use AppModules\Billing\Events\BalanceUpdated;
+use AppModules\Billing\Events\BalanceUpdatedEvent;
 use AppModules\Billing\Listeners\UpdateBalanceListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -19,7 +19,7 @@ class BillingServiceProvider extends ServiceProvider
     private function configureEvents(): void
     {
         Event::listen(
-            BalanceUpdated::class,
+            BalanceUpdatedEvent::class,
             UpdateBalanceListener::class
         );
     }

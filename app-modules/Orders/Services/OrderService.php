@@ -6,13 +6,14 @@ use AppModules\Assets\Repositories\AssetRepository;
 use AppModules\Orders\Concerns\OrderStatusEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use AppModules\Orders\DTO\OrderDTO;
-use AppModules\Orders\Events\OrderExecuted;
+use AppModules\Orders\Events\OrderCanceledEvent;
+use AppModules\Orders\Events\OrderExecutedEvent;
 use AppModules\Orders\Repositories\OrderRepository;
 use Exception;
-use http\Exception\RuntimeException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
+use RuntimeException;
 
 readonly class OrderService
 {
@@ -21,6 +22,11 @@ readonly class OrderService
         private AssetRepository $assetRepository,
     )
     {
+    }
+
+    public function getById(int $id): OrderDTO
+    {
+        return $this->repository->getById($id);
     }
 
     public function getAll(int $perPage = 10): LengthAwarePaginator
@@ -60,9 +66,19 @@ readonly class OrderService
         });
     }
 
-    public function delete(int $id): bool
+    public function cancelOrder(int $orderId, int $userId): bool
     {
-        return $this->repository->delete($id);
+        $order = $this->repository->getById($orderId);
+
+        if (!$order || $order->userId !== $userId) {
+            return false;
+        }
+
+        $this->repository->update($orderId, ['status' => OrderStatusEnum::Cancelled->value]);
+
+        event(new OrderCanceledEvent($order));
+
+        return true;
     }
 
     public function executeMarketOrder(int $orderId): bool
@@ -92,7 +108,7 @@ readonly class OrderService
             throw new RuntimeException('Failed to update order');
         }
 
-        event(new OrderExecuted($updatedOrder));
+        event(new OrderExecutedEvent($updatedOrder));
 
         return true;
     }

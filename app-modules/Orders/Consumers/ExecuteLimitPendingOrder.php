@@ -4,7 +4,7 @@ namespace AppModules\Orders\Consumers;
 
 use AppModules\Assets\Repositories\AssetRepository;
 use AppModules\Orders\Concerns\OrderStatusEnum;
-use AppModules\Orders\Events\OrderExecuted;
+use AppModules\Orders\Events\OrderExecutedEvent;
 use AppModules\Orders\Repositories\OrderRepository;
 use Carbon\Exceptions\Exception;
 use Illuminate\Console\Command;
@@ -46,7 +46,7 @@ class ExecuteLimitPendingOrder extends Command
 
             if ($asset->price == $order->price) {
                 $orderRepository->update($orderId, ['status' => OrderStatusEnum::Executed->value]);
-                event(new OrderExecuted($order));
+                event(new OrderExecutedEvent($order));
             }
             })
             ->build()

@@ -1,22 +1,22 @@
 <?php
 
-namespace AppModules\Trades\Events;
+namespace AppModules\Orders\Events;
 
-use AppModules\Trades\DTO\TradesDTO;
+use AppModules\Orders\DTO\OrderDTO;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TradeCreated
+class OrderExecutedEvent
 {
     use Dispatchable;
     use SerializesModels;
 
-    public function __construct(public TradesDTO $tradeDto)
+    public function __construct(public OrderDTO $order)
     {
     }
 
     public function toArray(): array
     {
-        return $this->tradeDto->toArray();
+        return $this->order->toArray();
     }
 }

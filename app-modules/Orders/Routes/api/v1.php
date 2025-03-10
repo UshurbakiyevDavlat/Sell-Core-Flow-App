@@ -9,5 +9,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/', [OrderController::class, 'store']); // Создать ордер
     Route::post('/{id}/execute-market-order', [OrderController::class, 'executeMarketOrder']);
 
-    Route::delete('/{id}', [OrderController::class, 'destroy']); // Отмена ордера
+    Route::delete('/{id}', [OrderController::class, 'cancelOrder']); // Отмена ордера
 });

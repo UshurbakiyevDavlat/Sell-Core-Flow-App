@@ -9,6 +9,8 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 readonly class OrderController
 {
@@ -29,9 +31,14 @@ readonly class OrderController
         return response()->json(new OrderResource($this->service->create($request->validated())), 201);
     }
 
-    public function destroy(int $id): Response
+    public function cancelOrder(int $id): Response
     {
-        $this->service->delete($id);
+        $userId = Auth::user()->getAuthIdentifier();
+
+        if (!$this->service->cancelOrder($id, $userId)) {
+            throw new UnprocessableEntityHttpException("Cannot cancel order");
+        }
+
         return response()->noContent();
     }
 

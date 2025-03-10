@@ -4,7 +4,7 @@ namespace AppModules\Trades\Services;
 
 use AppModules\Trades\Concerns\Enums\TradeStatusEnum;
 use AppModules\Trades\DTO\TradesDTO;
-use AppModules\Trades\Events\TradeCreated;
+use AppModules\Trades\Events\TradeCreatedEvent;
 use AppModules\Trades\Repositories\TradesRepository;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -18,7 +18,7 @@ readonly class TradesService
     {
         $tradeDto = $this->repository->create($data);
 
-        event(new TradeCreated($tradeDto));
+        event(new TradeCreatedEvent($tradeDto));
 
         return $tradeDto;
     }

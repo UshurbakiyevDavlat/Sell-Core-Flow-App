@@ -3,7 +3,7 @@
 namespace AppModules\Orders\Consumers;
 
 use AppModules\Orders\Concerns\OrderStatusEnum;
-use AppModules\Orders\Events\OrderExecuted;
+use AppModules\Orders\Events\OrderExecutedEvent;
 use AppModules\Orders\Repositories\OrderRepository;
 use Carbon\Exceptions\Exception;
 use Illuminate\Console\Command;
@@ -38,7 +38,7 @@ class ExecuteLimitOrdersByPriceUpdate extends Command
                     $orderRepository->bulkUpdateStatus($pendingOrdersIds, OrderStatusEnum::Executed->value);
 
                     foreach ($pendingOrders as $pendingOrder) {
-                        event(new OrderExecuted($pendingOrder));
+                        event(new OrderExecutedEvent($pendingOrder));
                     }
                 }
             })

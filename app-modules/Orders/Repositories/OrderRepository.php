@@ -49,20 +49,6 @@ class OrderRepository
         return OrderDTO::fromModel($order);
     }
 
-    public function delete(int $id): bool
-    {
-        $order = Order::query()->find($id);
-        if (!$order) {
-            return false;
-        }
-
-        $order->delete();
-        Cache::forget("order_$id");
-        Cache::forget("orders_list_page_10");//todo сделать без хардкода
-
-        return true;
-    }
-
     public function getPendingLimitOrdersByAsset(int $assetId): array
     {
         return Order::query()->where('status', OrderStatusEnum::Pending->value)

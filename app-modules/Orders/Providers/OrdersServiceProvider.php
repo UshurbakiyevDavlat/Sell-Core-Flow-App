@@ -4,8 +4,12 @@ namespace AppModules\Orders\Providers;
 
 use AppModules\Orders\Consumers\ExecuteLimitOrdersByPriceUpdate;
 use AppModules\Orders\Consumers\ExecuteLimitPendingOrder;
-use AppModules\Orders\Events\OrderExecuted;
-use AppModules\Orders\Listeners\CreateTradeFromOrder;
+use AppModules\Orders\Events\OrderCanceledEvent;
+use AppModules\Orders\Events\OrderExecutedEvent;
+use AppModules\Orders\Listeners\ChargeOrderListener;
+use AppModules\Orders\Listeners\CreateTradeFromOrderListener;
+use AppModules\Orders\Listeners\HandleOrderExecutionListener;
+use AppModules\Orders\Listeners\ReleaseOrderListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,8 +33,18 @@ class OrdersServiceProvider extends ServiceProvider
     private function configureEvents(): void
     {
         Event::listen(
-            OrderExecuted::class,
-            CreateTradeFromOrder::class
+            OrderExecutedEvent::class,
+            CreateTradeFromOrderListener::class
+        );
+
+        Event::listen(
+            OrderExecutedEvent::class,
+            HandleOrderExecutionListener::class,
+        );
+
+        Event::listen(
+            OrderCanceledEvent::class,
+            ReleaseOrderListener::class,
         );
     }
 }

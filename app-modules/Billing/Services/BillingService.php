@@ -93,7 +93,7 @@ readonly class BillingService
                 $balance->id,
                 $amount,
                 BillingTransactionTypeEnum::Credit,
-                $tradeId
+                $trade->orderId,
             );
         }
     }
