@@ -6,8 +6,10 @@ use AppModules\Assets\Repositories\AssetRepository;
 use AppModules\Orders\Concerns\OrderStatusEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use AppModules\Orders\DTO\OrderDTO;
+use AppModules\Orders\Events\OrderExecuted;
 use AppModules\Orders\Repositories\OrderRepository;
 use Exception;
+use http\Exception\RuntimeException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
@@ -71,20 +73,26 @@ readonly class OrderService
             || $order->type != OrderTypeEnum::Market
             || $order->status != OrderStatusEnum::Pending
         ) {
-            return false;
+            throw new RuntimeException('Fit order not found');
         }
 
         // Получаем текущую цену актива
         $asset = $this->assetRepository->getById($order->assetId); //todo make bridge and use it instead direct call
         if (!$asset) {
-            return false;
+            throw new RuntimeException('Asset not found');
         }
 
         // Исполняем ордер по текущей цене
-        $this->repository->update($orderId, [
+        $updatedOrder = $this->repository->update($orderId, [
             'price' => $asset->price,
-            'status' => 'executed',
+            'status' => OrderStatusEnum::Executed->value,
         ]);
+
+        if (!$updatedOrder) {
+            throw new RuntimeException('Failed to update order');
+        }
+
+        event(new OrderExecuted($updatedOrder));
 
         return true;
     }
