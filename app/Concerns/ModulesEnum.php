@@ -11,6 +11,7 @@ enum ModulesEnum: string
     case Auth = 'Auth';
     case Assets = 'Assets';
     case Orders = 'Orders';
+    case Trades = 'Trades';
 
     public static function getEnabledModules(): array
     {
@@ -18,6 +19,7 @@ enum ModulesEnum: string
             self::Auth->value,
             self::Assets->value,
             self::Orders->value,
+            self::Trades->value,
         ];
     }
 }

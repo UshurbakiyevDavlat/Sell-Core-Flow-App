@@ -22,13 +22,4 @@ class OrdersServiceProvider extends ServiceProvider
             ]);
         }
     }
-
-    public function register(): void
-    {
-        $this->app->singleton(OrderRepository::class, fn() => new OrderRepository());
-        $this->app->singleton(OrderService::class, fn(Application $app) => new OrderService(
-            $app->make(OrderRepository::class),
-            $app->make(AssetRepository::class),
-        ));
-    }
 }
