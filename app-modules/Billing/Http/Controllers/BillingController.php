@@ -28,7 +28,7 @@ class BillingController
         }
 
         $userId = Auth::id(); //todo get it through bridge from auth module
-        $this->billingService->release(userId: $userId, orderId: null, amount: $amount);
+        $this->billingService->refill($userId, $amount);
 
         return response()->noContent();
     }

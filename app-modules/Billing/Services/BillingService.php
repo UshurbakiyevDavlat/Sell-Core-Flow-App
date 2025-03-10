@@ -42,6 +42,20 @@ readonly class BillingService
         return false;
     }
 
+    public function refill(int $userId, $amount): void
+    {
+        $balance = $this->billingRepository->getUserBalance($userId);
+
+        if ($balance) {
+            $this->billingRepository->updateBalance($balance->id, $amount);
+            $this->billingRepository->createTransaction(
+                $balance->id,
+                $amount,
+                BillingTransactionTypeEnum::Credit,
+            );
+        }
+    }
+
     public function release(int $userId, int $orderId): void
     {
         $order = $this->orderRepository->getById($orderId);
