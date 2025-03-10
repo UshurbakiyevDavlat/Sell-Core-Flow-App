@@ -38,7 +38,9 @@ class OrderRepository
     public function update(int $id, array $data): ?OrderDTO
     {
         $order = Order::query()->find($id);
-        if (!$order) return null;
+        if (!$order) {
+            return null;
+        }
 
         $order->update($data);
         Cache::forget("order_$id");
@@ -61,13 +63,13 @@ class OrderRepository
         return true;
     }
 
-    public function getPendingLimitOrdersIdsByAsset(int $assetId): array
+    public function getPendingLimitOrdersByAsset(int $assetId): array
     {
         return Order::query()->where('status', OrderStatusEnum::Pending->value)
             ->where('type', OrderTypeEnum::Limit->value)
             ->where('asset_id', $assetId)
             ->get()
-            ->map(fn(?Order $order) => OrderDTO::fromModel($order)?->id) //todo check null pointer cases
+            ->map(fn(?Order $order) => OrderDTO::fromModel($order))
             ->toArray();
     }
 

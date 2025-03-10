@@ -19,6 +19,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY ./docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 COPY ./docker/supervisor/kafka_orders.conf /etc/supervisor/conf.d/kafka_orders.conf
+COPY ./docker/supervisor/laravel_worker.conf /etc/supervisor/conf.d/laravel_worker.conf
 COPY ./docker/supervisor/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
 
 COPY ./docker/start-supervisor.sh /usr/local/bin/start-supervisor.sh

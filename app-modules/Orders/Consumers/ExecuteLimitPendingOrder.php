@@ -4,6 +4,7 @@ namespace AppModules\Orders\Consumers;
 
 use AppModules\Assets\Repositories\AssetRepository;
 use AppModules\Orders\Concerns\OrderStatusEnum;
+use AppModules\Orders\Events\OrderExecuted;
 use AppModules\Orders\Repositories\OrderRepository;
 use Carbon\Exceptions\Exception;
 use Illuminate\Console\Command;
@@ -12,9 +13,9 @@ use Junges\Kafka\Facades\Kafka;
 use Junges\Kafka\Message\ConsumedMessage;
 use RuntimeException;
 
-class ProcessPendingOrders extends Command
+class ExecuteLimitPendingOrder extends Command
 {
-    protected $signature = 'kafka:consume:orders';
+    protected $signature = 'kafka:consume:limit_pending_orders';
 
     /**
      * @throws Exception
@@ -25,31 +26,7 @@ class ProcessPendingOrders extends Command
         AssetRepository $assetRepository,
     ): void
     {
-        // Listen for price_update
-        Kafka::consumer(['price_update'])
-            ->withHandler(function (ConsumedMessage $message) use ($orderRepository) {
-                $messageBody = $message->getBody();
-                $assetId = $messageBody['asset_id'] ?? null;
-                $newPrice = $messageBody['price'] ?? null;
-
-                if (!$assetId || !$newPrice) {
-                    throw new ConsumerException('AssetId or newPrice missing');
-                }
-
-                /**
-                 * Разделение на buy и sell отдельно понадобится лишь в том случае если у нас будет
-                 * - разная логика обновления для них или же будет частичное исполнение ордера
-                 */
-                $pendingOrdersIds = $orderRepository->getPendingLimitOrdersIdsByAsset($assetId);
-                if (!empty($pendingOrdersIds)) {
-                    $orderRepository->bulkUpdateStatus($pendingOrdersIds, OrderStatusEnum::Executed->value);
-                }
-            })
-            ->build()
-            ->consume();
-
-        // Listen for pending orders
-        Kafka::consumer(['pending_orders'])
+        Kafka::consumer(['limit_pending_orders']) //todo rename it to limit_pending_orders
             ->withHandler(function (ConsumedMessage $message) use ($orderRepository, $assetRepository) {
                 $messageBody = $message->getBody();
                 $orderId = $messageBody['order_id'] ?? null;
@@ -67,7 +44,10 @@ class ProcessPendingOrders extends Command
                     throw new RuntimeException('Asset not found');
                 }
 
+            if ($asset->price == $order->price) {
                 $orderRepository->update($orderId, ['status' => OrderStatusEnum::Executed->value]);
+                event(new OrderExecuted($order));
+            }
             })
             ->build()
             ->consume();

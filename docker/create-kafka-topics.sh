@@ -10,8 +10,8 @@ echo "Waiting for Kafka to be ready..."
 sleep 10
 
 echo "Creating Kafka topics..."
-kafka-topics.sh --create --if-not-exists --topic price_update --bootstrap-server kafka:9092
-kafka-topics.sh --create --if-not-exists --topic pending_orders --bootstrap-server kafka:9092
+kafka-topics.sh --create --if-not-exists --topic asset_price_update --bootstrap-server kafka:9092
+kafka-topics.sh --create --if-not-exists --topic limit_pending_orders --bootstrap-server kafka:9092
 
 echo "Kafka topics created successfully."
 

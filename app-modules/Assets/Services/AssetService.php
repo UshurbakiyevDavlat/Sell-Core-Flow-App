@@ -44,7 +44,7 @@ class AssetService
             $this->repository->update($id, ['price' => $newPrice]);
 
             Kafka::publish()
-                ->onTopic('price_update')
+                ->onTopic('asset_price_update')
                 ->withBody([
                     'asset_id' => $id,
                     'price' => $newPrice,

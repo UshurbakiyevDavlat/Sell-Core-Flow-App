@@ -2,11 +2,11 @@
 
 namespace AppModules\Orders\Providers;
 
-use AppModules\Assets\Repositories\AssetRepository;
-use AppModules\Orders\Consumers\ProcessPendingOrders;
-use AppModules\Orders\Repositories\OrderRepository;
-use AppModules\Orders\Services\OrderService;
-use Illuminate\Foundation\Application;
+use AppModules\Orders\Consumers\ExecuteLimitOrdersByPriceUpdate;
+use AppModules\Orders\Consumers\ExecuteLimitPendingOrder;
+use AppModules\Orders\Events\OrderExecuted;
+use AppModules\Orders\Listeners\CreateTradeFromOrder;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class OrdersServiceProvider extends ServiceProvider
@@ -15,11 +15,22 @@ class OrdersServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->configureEvents();
 
         if ($this->app->runningInConsole()) {
+            //todo make automatically loading all commands
             $this->commands([
-                ProcessPendingOrders::class, //todo make automatically loading all commands
+                ExecuteLimitPendingOrder::class,
+                ExecuteLimitOrdersByPriceUpdate::class,
             ]);
         }
+    }
+
+    private function configureEvents(): void
+    {
+        Event::listen(
+            OrderExecuted::class,
+            CreateTradeFromOrder::class
+        );
     }
 }

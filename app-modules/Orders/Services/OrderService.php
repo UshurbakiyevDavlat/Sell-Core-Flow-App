@@ -44,7 +44,7 @@ readonly class OrderService
 
             if ($order->type == OrderTypeEnum::Limit) {
                 Kafka::publish()
-                    ->onTopic('pending_orders')
+                    ->onTopic('limit_pending_orders')
                     ->withBody([
                         'order_id' => $order->id,
                         'asset_id' => $order->assetId,
