@@ -3,16 +3,18 @@
 namespace AppModules\Assets\Services;
 
 use AppModules\Assets\DTO\AssetDTO;
+use AppModules\Assets\Factories\MarketDataProviderFactory;
 use AppModules\Assets\Repositories\AssetRepository;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
 
-class AssetService
+readonly class AssetService
 {
     public function __construct(
-        private readonly AssetRepository $repository
+        private AssetRepository           $repository,
+        private MarketDataProviderFactory $providerFactory
     ) {}
 
     public function getAll(int $perPage): LengthAwarePaginator
@@ -53,8 +55,62 @@ class AssetService
         });
     }
 
+    /**
+     * @throws Exception
+     */
+    public function updateAllPrices(): void
+    {
+        $provider = $this->providerFactory->provider();
+        $symbols = $this->repository->getAllSymbols();
+
+        foreach ($symbols as $symbol) {
+            $newPrice = $provider->getPrice($symbol);
+            $this->repository->updatePriceBySymbol($symbol, $newPrice);
+
+            Kafka::publish()
+                ->onTopic('asset_price_update')
+                ->withBody([
+                    'symbol' => $symbol,
+                    'price' => $newPrice,
+                ])
+                ->send();
+        }
+    }
+
     public function delete(int $id): bool
     {
         return $this->repository->delete($id);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function initializeAssets(): void
+    {
+        $provider = $this->providerFactory->provider();
+        $assets = $provider->getAssetList();
+
+        if (empty($assets)) {
+            throw new Exception("Asset list is empty");
+        }
+
+        foreach ($assets as $assetData) {
+            if ($this->repository->exists($assetData['symbol'])) {
+                continue;
+            }
+            $this->repository->create([
+                'symbol' => $assetData['symbol'],
+                'name' => $assetData['name'],
+                'type' => strtolower($assetData['assetType'] ?? 'stock'),
+                'price' => 0, // Цена будет обновлена позже
+            ]);
+        }
+    }
+
+
+    public function getHistoricalData(string $symbol, string $interval = 'daily', int $outputSize = 100): array
+    {
+        $provider = $this->providerFactory->provider();
+        return $provider->getHistoricalData($symbol, $interval, $outputSize);
     }
 }

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Cache;
 
 class AssetRepository
 {
+    public function exists(string $symbol): bool
+    {
+        return Asset::query()->where('symbol', $symbol)->exists();
+    }
+
     public function getAll(int $perPage = 10): LengthAwarePaginator
     {
         return Cache::remember("assets_list_page_$perPage", 60, function () use ($perPage) {
@@ -21,6 +26,7 @@ class AssetRepository
     {
         return Cache::remember("asset_$id", 60, function () use ($id) {
             $asset = Asset::query()->find($id);
+
             return $asset ? AssetDTO::fromModel($asset) : null;
         });
     }
@@ -28,7 +34,8 @@ class AssetRepository
     public function create(array $data): AssetDTO
     {
         $asset = Asset::query()->create($data);
-        Cache::forget("assets_list_page_10");
+        Cache::forget("assets_list_page_10"); //todo что за хардкод
+
         return AssetDTO::fromModel($asset);
     }
 
@@ -39,9 +46,18 @@ class AssetRepository
 
         $asset->update($data);
         Cache::forget("asset_$id");
-        Cache::forget("assets_list_page_10");
+        Cache::forget("assets_list_page_10"); //todo сделать без хардкода
 
         return AssetDTO::fromModel($asset);
+    }
+
+    public function updatePriceBySymbol(string $symbol, float $newPrice): void
+    {
+        $asset = Asset::query()->where('symbol', $symbol)->first();
+        if (!$asset) return;
+
+        $asset->update(['price' => $newPrice]);
+        Cache::forget("asset_$asset->id");
     }
 
     public function delete(int $id): bool
@@ -67,4 +83,8 @@ class AssetRepository
         });
     }
 
+    public function getAllSymbols(): array
+    {
+        return Asset::query()->pluck('symbol')->toArray();
+    }
 }
