@@ -13,6 +13,7 @@ enum ModulesEnum: string
     case Orders = 'Orders';
     case Trades = 'Trades';
     case Billing = 'Billing';
+    case Strategies = 'Strategies';
 
     public static function getEnabledModules(): array
     {
@@ -22,6 +23,7 @@ enum ModulesEnum: string
             self::Orders->value,
             self::Trades->value,
             self::Billing->value,
+            self::Strategies->value,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace AppModules\Orders\Http\Controllers;
 
+use AppModules\Orders\Concerns\OrderStatusEnum;
 use AppModules\Orders\Http\Requests\CreateOrderRequest;
 use AppModules\Orders\Http\Resources\OrderResource;
 use AppModules\Orders\Services\OrderService;
@@ -28,7 +29,16 @@ readonly class OrderController
      */
     public function store(CreateOrderRequest $request): JsonResponse
     {
-        return response()->json(new OrderResource($this->service->create($request->validated())), 201);
+        $data = $request->validated();
+
+        $data['user_id'] = Auth::id();
+        $data['status'] = OrderStatusEnum::Pending;
+
+        //todo please make resource
+        return response()->json(
+            new OrderResource($this->service->create($data)),
+            201
+        );
     }
 
     public function cancelOrder(int $id): Response
@@ -45,6 +55,7 @@ readonly class OrderController
     public function executeMarketOrder(int $id): Response
     {
         $this->service->executeMarketOrder($id);
+
         return response()->noContent();
     }
 

@@ -38,7 +38,7 @@ class BillingController
         $userId = Auth::id();//todo get it through bridge from auth module
         $balance = $this->billingService->getBalance($userId);
 
-        return response()->json(['balance' => $balance]);
+        return response()->json(['balance' => $balance]); //todo please,make resource.
     }
 
     public function history(): JsonResponse
@@ -48,7 +48,7 @@ class BillingController
         $balance = $this->billingService->getBalance($userId);
         $transactions = $this->billingService->getTransactions($balance->id);
 
-        return response()->json(['transactions' => $transactions]);
+        return response()->json(['transactions' => $transactions]);//todo please,make resource.
     }
 
     /**

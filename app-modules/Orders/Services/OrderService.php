@@ -41,13 +41,13 @@ readonly class OrderService
     {
         return DB::transaction(function () use ($data) {
             $order = $this->repository->create([
-                'user_id' => auth()->id(),
+                'user_id' => $data['user_id'],
                 'asset_id' => $data['asset_id'],
                 'type' => $data['type'],
                 'side' => $data['side'],
                 'price' => $data['price'] ?? null,
                 'quantity' => $data['quantity'],
-                'status' => 'pending',
+                'status' => $data['status'],
             ]);
 
             if ($order->type == OrderTypeEnum::Limit) {
@@ -89,13 +89,13 @@ readonly class OrderService
             || $order->type != OrderTypeEnum::Market
             || $order->status != OrderStatusEnum::Pending
         ) {
-            throw new RuntimeException('Fit order not found');
+            throw new RuntimeException('Fit order not found'); //todo return null, because this is controller's responsibility
         }
 
         // Получаем текущую цену актива
         $asset = $this->assetRepository->getById($order->assetId); //todo make bridge and use it instead direct call
         if (!$asset) {
-            throw new RuntimeException('Asset not found');
+            throw new RuntimeException('Asset not found'); //todo return null, because this is controller's responsibility
         }
 
         // Исполняем ордер по текущей цене
@@ -105,7 +105,7 @@ readonly class OrderService
         ]);
 
         if (!$updatedOrder) {
-            throw new RuntimeException('Failed to update order');
+            throw new RuntimeException('Failed to update order'); //todo return null, because this is controller's responsibility
         }
 
         event(new OrderExecutedEvent($updatedOrder));
