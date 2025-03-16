@@ -14,10 +14,6 @@ class CreateTradeFromOrderListener implements ShouldQueue
 
     public function handle(OrderExecutedEvent $event): void
     {
-        if ($event->order->tradeMode === OrderTradeModeEnum::Backtest) {
-            return; // Back testing режим не создает трейдов.
-        }
-
         // todo need to make bridge and do this through it.
         $this->tradesService->createTrade([
             'order_id' => $event->order->id,
