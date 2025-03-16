@@ -17,6 +17,7 @@ class CreateOrderRequest extends FormRequest
             'side' => ['required', Rule::in(OrderSideEnum::cases())],
             'price' => ['nullable', 'numeric', 'min:0', 'required_if:type,limit'],
             'quantity' => ['required', 'numeric', 'min:0.000001'],
+            //todo Добавить торговый мод, пепер трейдинг или реальная торговля.
         ];
     }
 }

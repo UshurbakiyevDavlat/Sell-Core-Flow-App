@@ -17,6 +17,7 @@ readonly class BillingService
         protected TradesRepository $tradeRepository
     ) {}
 
+    //todo Добавить обработку торгового мода
     public function charge(int $userId, int $orderId): bool
     {
         $order = $this->orderRepository->getById($orderId);

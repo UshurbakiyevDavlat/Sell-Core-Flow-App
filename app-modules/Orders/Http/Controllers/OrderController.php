@@ -31,6 +31,7 @@ readonly class OrderController
 
         $data['user_id'] = Auth::id();
         $data['status'] = OrderStatusEnum::Pending;
+        //todo Добавить торговый мод
 
         $order = $this->service->create($data);
 
