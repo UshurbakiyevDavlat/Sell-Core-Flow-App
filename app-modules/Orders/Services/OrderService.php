@@ -47,7 +47,7 @@ readonly class OrderService
                 'price' => $data['price'] ?? null,
                 'quantity' => $data['quantity'],
                 'status' => $data['status'] ?? OrderStatusEnum::Pending,
-                'trade_mod' => $data['trade_mod'] ?? OrderTradeModeEnum::Paper,
+                'trade_mod' => $data['trade_mode'] ?? OrderTradeModeEnum::Paper,
             ]);
 
             switch ($order->type) {
@@ -88,8 +88,7 @@ readonly class OrderService
             throw new RuntimeException('Fit order not found');
         }
 
-        if ($order->tradeMode !== OrderTradeModeEnum::Backtest)
-        {
+        if ($order->tradeMode !== OrderTradeModeEnum::Backtest) {
             // Получаем актив
             $asset = $this->assetRepository->getById($order->assetId); // todo make bridge and use it instead direct call
             if (! $asset) {

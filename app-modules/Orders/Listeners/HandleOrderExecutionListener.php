@@ -4,6 +4,7 @@ namespace AppModules\Orders\Listeners;
 
 use AppModules\Billing\Services\BillingService;
 use AppModules\Orders\Concerns\OrderSideEnum;
+use AppModules\Orders\Concerns\OrderTradeModeEnum;
 use AppModules\Orders\Events\OrderExecutedEvent;
 
 class HandleOrderExecutionListener
@@ -13,6 +14,11 @@ class HandleOrderExecutionListener
     public function handle(OrderExecutedEvent $event): void
     {
         $order = $event->order;
+
+        // Если это Backtest, деньги НЕ списываем
+        if ($order->tradeMode === OrderTradeModeEnum::Backtest) {
+            return;
+        }
 
         if ($order->side === OrderSideEnum::Buy) {
             // Если ордер на покупку, списываем деньги

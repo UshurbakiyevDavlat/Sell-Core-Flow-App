@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class StrategyService
 {
+    // todo когда будет время на рефактор, убедиться что все через bridge..
     public function __construct(
         protected OrderService $orderService,
         protected UserService $userService,
@@ -34,6 +35,7 @@ class StrategyService
         int $userId,
         int $assetId,
         float $quantity,
+        OrderTradeModeEnum $tradeMode = OrderTradeModeEnum::Backtest // Пока только бектест
     ): ?OrderDTO {
         $strategy = StrategyFactory::make($strategyName);
         $marketData = $this->assetService->getHistoricalData($assetId);
@@ -44,7 +46,8 @@ class StrategyService
             $userId,
             $quantity,
             $strategyName,
-            $assetId
+            $assetId,
+            $tradeMode
         ) {
             if (empty($marketData)) {
                 $this->strategyRunService->logRun([
@@ -77,25 +80,10 @@ class StrategyService
 
             $orderData['user_id'] = $userId;
             $orderData['asset_id'] = $assetId;
-            $orderData['trade_mod'] = OrderTradeModeEnum::Backtest->value;
+            $orderData['trade_mode'] = $tradeMode->value; // Указываем режим торговли
 
             $order = $this->orderService->create($orderData);
 
-            if (! $this->billingService->charge($userId, $order->id)) {
-                $this->strategyRunService->logRun([
-                    'user_id' => $userId,
-                    'strategy' => $strategyName->value,
-                    'asset_id' => $assetId,
-                    'quantity' => $quantity,
-                    'price' => $order->price,
-                    'status' => StrategyStatusEnum::Failed->value,
-                    'message' => 'Недостаточно средств',
-                ]);
-
-                return null;
-            }
-
-            // Логируем успешный запуск стратегии
             $this->strategyRunService->logRun([
                 'user_id' => $userId,
                 'strategy' => $strategyName->value,
