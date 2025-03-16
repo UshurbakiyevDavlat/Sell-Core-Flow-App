@@ -13,6 +13,6 @@ class AuthBridge extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-       return AuthBridgeInterface::class;
+        return AuthBridgeInterface::class;
     }
 }

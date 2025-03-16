@@ -14,20 +14,18 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class BillingController
 {
-    public function __construct(protected BillingService $billingService)
-    {
-    }
+    public function __construct(protected BillingService $billingService) {}
 
     public function deposit(BillingDepositRequest $request): Response
     {
         $data = $request->validated();
         $amount = $data['amount'] ?? null;
 
-        if (!$amount) {
+        if (! $amount) {
             throw new UnprocessableEntityHttpException('Amount is required.');
         }
 
-        $userId = Auth::id(); //todo get it through bridge from auth module
+        $userId = Auth::id(); // todo get it through bridge from auth module
         $this->billingService->refill($userId, $amount);
 
         return response()->noContent();
@@ -35,20 +33,20 @@ class BillingController
 
     public function balance(): JsonResponse
     {
-        $userId = Auth::id();//todo get it through bridge from auth module
+        $userId = Auth::id(); // todo get it through bridge from auth module
         $balance = $this->billingService->getBalance($userId);
 
-        return response()->json(['balance' => $balance]); //todo please,make resource.
+        return response()->json(['balance' => $balance]); // todo please,make resource.
     }
 
     public function history(): JsonResponse
     {
-        $userId = Auth::id();//todo get it through bridge from auth module
+        $userId = Auth::id(); // todo get it through bridge from auth module
 
         $balance = $this->billingService->getBalance($userId);
         $transactions = $this->billingService->getTransactions($balance->id);
 
-        return response()->json(['transactions' => $transactions]);//todo please,make resource.
+        return response()->json(['transactions' => $transactions]); // todo please,make resource.
     }
 
     /**
@@ -61,7 +59,7 @@ class BillingController
 
         $success = $this->billingService->charge($userId, $data['order_id']);
 
-        if (!$success) {
+        if (! $success) {
             throw new UnprocessableEntityHttpException('Insufficient funds.');
         }
 

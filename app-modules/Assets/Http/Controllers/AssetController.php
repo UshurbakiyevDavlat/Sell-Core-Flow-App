@@ -17,9 +17,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 readonly class AssetController
 {
-    public function __construct(private AssetService $service)
-    {
-    }
+    public function __construct(private AssetService $service) {}
 
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -38,8 +36,8 @@ readonly class AssetController
     public function show(int $id): JsonResponse
     {
         $asset = $this->service->getById($id);
-        if (!$asset) {
-            throw new NotFoundHttpException();
+        if (! $asset) {
+            throw new NotFoundHttpException;
         }
 
         return response()->json(new AssetResource($asset));
@@ -60,7 +58,7 @@ readonly class AssetController
         $data = $request->validated();
         $price = $data['price'] ?? null;
 
-        if (!$price) {
+        if (! $price) {
             throw new UnprocessableEntityHttpException('Price is required');
         }
 

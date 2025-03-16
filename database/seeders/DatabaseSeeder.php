@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $modulesPath = base_path('app-modules');
 
-        if (!is_dir($modulesPath)) {
+        if (! is_dir($modulesPath)) {
             return;
         }
 
@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($modules as $module) {
             $seederNamespace = "AppModules\\$module\\Database\\Seeders\\";
-            $seederClass = $seederNamespace . "{$module}DatabaseSeeder";
+            $seederClass = $seederNamespace."{$module}DatabaseSeeder";
 
             $seederPath = "$modulesPath/$module/Database/Seeders/{$module}DatabaseSeeder.php";
 

@@ -18,7 +18,7 @@ readonly class TransactionsDTO
 
     public static function fromModel(?BillingTransaction $transaction): ?self
     {
-        if (!$transaction) {
+        if (! $transaction) {
             return null;
         }
 
@@ -44,4 +44,3 @@ readonly class TransactionsDTO
         ];
     }
 }
-

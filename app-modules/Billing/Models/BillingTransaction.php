@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BillingTransaction extends Model
 {
     protected $table = 'billing_transactions';
+
     protected $fillable = [
         'billing_account_id',
         'amount',

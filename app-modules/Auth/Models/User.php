@@ -17,6 +17,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $password
  * @property \AppModules\Auth\Concerns\Enums\Auth\UserStatusEnum $status
  * @property string $email
+ *
  * @method static where(string $string, string $email)
  * @method static find(int $id)
  * @method static create(array $array)
@@ -31,10 +32,10 @@ class User extends Authenticatable implements AuthorizableContract
     protected string $guard_name = 'api';
 
     protected $fillable = [
-      'name',
-      'email',
-      'password',
-      'status',
+        'name',
+        'email',
+        'password',
+        'status',
     ];
 
     protected $hidden = [

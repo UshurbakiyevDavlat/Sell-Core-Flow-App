@@ -17,7 +17,7 @@ class TradesResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'status' => $this->status,
-            'createdAt' => $this->createdAt
+            'createdAt' => $this->createdAt,
         ];
     }
 }

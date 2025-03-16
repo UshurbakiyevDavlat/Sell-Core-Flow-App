@@ -10,19 +10,17 @@ use AppModules\Trades\Repositories\TradesRepository;
 
 readonly class BillingService
 {
-    //todo need bridges for other modules functional
+    // todo need bridges for other modules functional
     public function __construct(
         protected BillingRepository $billingRepository,
-        protected OrderRepository   $orderRepository,
-        protected TradesRepository  $tradeRepository
-    )
-    {
-    }
+        protected OrderRepository $orderRepository,
+        protected TradesRepository $tradeRepository
+    ) {}
 
     public function charge(int $userId, int $orderId): bool
     {
         $order = $this->orderRepository->getById($orderId);
-        if (!$order || $order->userId !== $userId) {
+        if (! $order || $order->userId !== $userId) {
             return false;
         }
 
@@ -37,8 +35,10 @@ readonly class BillingService
                 BillingTransactionTypeEnum::Debit,
                 $orderId
             );
+
             return true;
         }
+
         return false;
     }
 
@@ -59,7 +59,7 @@ readonly class BillingService
     public function release(int $userId, int $orderId): void
     {
         $order = $this->orderRepository->getById($orderId);
-        if (!$order || $order->userId !== $userId) {
+        if (! $order || $order->userId !== $userId) {
             return;
         }
 
@@ -80,7 +80,7 @@ readonly class BillingService
     public function profit(int $userId, int $tradeId): void
     {
         $trade = $this->tradeRepository->getById($tradeId);
-        if (!$trade || $trade->userId !== $userId) {
+        if (! $trade || $trade->userId !== $userId) {
             return;
         }
 

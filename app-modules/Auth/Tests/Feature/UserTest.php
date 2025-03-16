@@ -22,8 +22,8 @@ it('user successfully logged in', function () {
     $user = User::factory()->create(['password' => 'password']);
 
     $requestData = [
-      'email' => $user->email,
-      'password' => 'password',
+        'email' => $user->email,
+        'password' => 'password',
     ];
 
     $response = $this->postJson('/api/auth/v1/login', $requestData);

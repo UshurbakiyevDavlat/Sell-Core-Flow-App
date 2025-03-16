@@ -12,9 +12,8 @@ class UpdateAssetPricesCommand extends Command
 
     public function __construct(
         protected MarketDataProviderFactory $providerFactory,
-        protected AssetRepository           $repository
-    )
-    {
+        protected AssetRepository $repository
+    ) {
         parent::__construct();
     }
 

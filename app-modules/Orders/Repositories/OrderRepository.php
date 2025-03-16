@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Cache;
 
 class OrderRepository
 {
-    public function getAll(int $perPage = 10): LengthAwarePaginator //todo repository should return primitive or dto
+    public function getAll(int $perPage = 10): LengthAwarePaginator // todo repository should return primitive or dto
     {
         return Cache::remember("orders_list_page_$perPage", 60, function () use ($perPage) {
             return Order::query()->paginate($perPage)
-                ->through(fn(Order $order) => OrderDTO::fromModel($order));
+                ->through(fn (Order $order) => OrderDTO::fromModel($order));
         });
     }
 
@@ -23,6 +23,7 @@ class OrderRepository
     {
         return Cache::remember("order_$id", 60, function () use ($id) {
             $order = Order::query()->find($id);
+
             return $order ? OrderDTO::fromModel($order) : null;
         });
     }
@@ -30,7 +31,7 @@ class OrderRepository
     public function create(array $data): OrderDTO
     {
         $order = Order::query()->create($data);
-        Cache::forget("orders_list_page_10");
+        Cache::forget('orders_list_page_10');
 
         return OrderDTO::fromModel($order);
     }
@@ -38,13 +39,13 @@ class OrderRepository
     public function update(int $id, array $data): ?OrderDTO
     {
         $order = Order::query()->find($id);
-        if (!$order) {
+        if (! $order) {
             return null;
         }
 
         $order->update($data);
         Cache::forget("order_$id");
-        Cache::forget("orders_list_page_10");
+        Cache::forget('orders_list_page_10');
 
         return OrderDTO::fromModel($order);
     }
@@ -55,7 +56,7 @@ class OrderRepository
             ->where('type', OrderTypeEnum::Limit->value)
             ->where('asset_id', $assetId)
             ->get()
-            ->map(fn(?Order $order) => OrderDTO::fromModel($order))
+            ->map(fn (?Order $order) => OrderDTO::fromModel($order))
             ->toArray();
     }
 
@@ -63,5 +64,4 @@ class OrderRepository
     {
         Order::query()->whereIn('id', $orderIds)->update(['status' => $status]);
     }
-
 }

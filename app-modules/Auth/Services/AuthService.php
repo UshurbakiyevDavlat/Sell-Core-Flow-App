@@ -2,9 +2,9 @@
 
 namespace AppModules\Auth\Services;
 
+use AppModules\Auth\DTO\UserDTO;
 use AppModules\Auth\Models\User;
 use AppModules\Auth\Repositories\UserRepository;
-use AppModules\Auth\DTO\UserDTO;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,7 +23,7 @@ class AuthService
 
         return [
             'user' => $userDTO,
-            'token' => $this->generateToken($userDTO)
+            'token' => $this->generateToken($userDTO),
         ];
     }
 
@@ -34,7 +34,7 @@ class AuthService
     {
         $userDTO = $this->userRepository->findByEmail($credentials['email']);
 
-        if (!$userDTO || !password_verify($credentials['password'], $userDTO->password)) {
+        if (! $userDTO || ! password_verify($credentials['password'], $userDTO->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Invalid credentials.'],
             ]);
@@ -42,7 +42,7 @@ class AuthService
 
         return [
             'user' => $userDTO,
-            'token' => $this->generateToken($userDTO)
+            'token' => $this->generateToken($userDTO),
         ];
     }
 
@@ -51,11 +51,10 @@ class AuthService
         /** @var User $user */
         $user = User::find($userDTO->id);
 
-        if (!$user) {
-            throw new NotFoundHttpException();
+        if (! $user) {
+            throw new NotFoundHttpException;
         }
 
         return $user->createToken('auth_token')->plainTextToken;
     }
 }
-

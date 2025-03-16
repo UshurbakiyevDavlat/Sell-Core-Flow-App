@@ -14,4 +14,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{asset}', [AssetController::class, 'destroy']);
     });
 });
-

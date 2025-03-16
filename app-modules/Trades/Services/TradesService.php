@@ -10,9 +10,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 readonly class TradesService
 {
-    public function __construct(private TradesRepository $repository)
-    {
-    }
+    public function __construct(private TradesRepository $repository) {}
 
     public function createTrade(array $data): TradesDTO
     {
@@ -27,7 +25,7 @@ readonly class TradesService
     {
         $trade = $this->repository->getById($tradeId);
 
-        if (!$trade || $trade->status != TradeStatusEnum::Pending) {
+        if (! $trade || $trade->status != TradeStatusEnum::Pending) {
             throw new UnprocessableEntityHttpException('Pending trade not found');
         }
 

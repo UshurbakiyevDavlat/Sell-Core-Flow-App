@@ -9,9 +9,7 @@ use Illuminate\Http\Response;
 
 readonly class TradesController
 {
-    public function __construct(private TradesService $service)
-    {
-    }
+    public function __construct(private TradesService $service) {}
 
     public function store(CreateTradesRequest $request): TradesResource
     {

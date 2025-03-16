@@ -11,6 +11,7 @@ class UserController
     public function index(): AnonymousResourceCollection
     {
         $users = User::query()->paginate(10);
+
         return UserResource::collection($users);
     }
 

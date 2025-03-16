@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
-//todo make refactor
+// todo make refactor
 class RoleController
 {
     public function index(): JsonResponse
@@ -19,18 +19,21 @@ class RoleController
     {
         $request->validate(['name' => 'required|string|unique:roles']);
         Role::create(['name' => $request->name]);
+
         return response()->json(['message' => 'Role created successfully']);
     }
 
     public function delete(Role $role): JsonResponse
     {
         $role->delete();
+
         return response()->json(['message' => 'Role deleted successfully']);
     }
 
     public function assignRole(User $user, Role $role): JsonResponse
     {
         $user->assignRole($role);
+
         return response()->json(['message' => "Role '{$role->name}' assigned to user {$user->id}"]);
     }
 
@@ -42,6 +45,7 @@ class RoleController
         ]);
 
         $role->syncPermissions($request->permissions);
+
         return response()->json([
             'message' => "Permissions assigned to role '{$role->name}'",
             'permissions' => $role->permissions,

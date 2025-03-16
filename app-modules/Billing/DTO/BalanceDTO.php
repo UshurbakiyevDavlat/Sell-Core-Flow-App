@@ -7,16 +7,14 @@ use AppModules\Billing\Models\BillingAccount;
 readonly class BalanceDTO
 {
     public function __construct(
-        public int   $id,
-        public int   $userId,
+        public int $id,
+        public int $userId,
         public float $balance,
-    )
-    {
-    }
+    ) {}
 
     public static function fromModel(?BillingAccount $billingAccount): ?self
     {
-        if (!$billingAccount) {
+        if (! $billingAccount) {
             return null;
         }
 
@@ -36,4 +34,3 @@ readonly class BalanceDTO
         ];
     }
 }
-

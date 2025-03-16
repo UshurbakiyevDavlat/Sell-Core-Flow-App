@@ -17,8 +17,7 @@ class BillingChargeRequest extends FormRequest
     {
         return [
             'order_id.required' => 'ID ордера обязателен.',
-            'order_id.exists'   => 'Ордера с таким ID не существует.',
+            'order_id.exists' => 'Ордера с таким ID не существует.',
         ];
     }
 }
-

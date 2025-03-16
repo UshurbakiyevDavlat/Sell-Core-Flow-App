@@ -15,9 +15,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 readonly class OrderController
 {
-    public function __construct(private OrderService $service)
-    {
-    }
+    public function __construct(private OrderService $service) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -34,7 +32,7 @@ readonly class OrderController
         $data['user_id'] = Auth::id();
         $data['status'] = OrderStatusEnum::Pending;
 
-        //todo please make resource
+        // todo please make resource
         return response()->json(
             new OrderResource($this->service->create($data)),
             201
@@ -45,8 +43,8 @@ readonly class OrderController
     {
         $userId = Auth::user()->getAuthIdentifier();
 
-        if (!$this->service->cancelOrder($id, $userId)) {
-            throw new UnprocessableEntityHttpException("Cannot cancel order");
+        if (! $this->service->cancelOrder($id, $userId)) {
+            throw new UnprocessableEntityHttpException('Cannot cancel order');
         }
 
         return response()->noContent();
@@ -58,5 +56,4 @@ readonly class OrderController
 
         return response()->noContent();
     }
-
 }

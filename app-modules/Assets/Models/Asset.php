@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static insert(array[] $array)
  * @method static find(int $id)
+ *
  * @property int $id
  * @property string $symbol
  * @property string $name

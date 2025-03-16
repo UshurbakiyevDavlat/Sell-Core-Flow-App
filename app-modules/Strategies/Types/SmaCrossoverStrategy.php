@@ -3,9 +3,6 @@
 namespace AppModules\Strategies\Types;
 
 use AppModules\Orders\Concerns\OrderSideEnum;
-use AppModules\Orders\Concerns\OrderStatusEnum;
-use AppModules\Orders\Concerns\OrderTypeEnum;
-use AppModules\Orders\DTO\OrderDTO;
 use AppModules\Strategies\Contracts\StrategyInterface;
 
 /**
@@ -19,52 +16,40 @@ use AppModules\Strategies\Contracts\StrategyInterface;
  */
 class SmaCrossoverStrategy implements StrategyInterface
 {
-    public function execute(array $marketData, ?float $previousSma50 = null, ?float $previousSma200 = null): ?OrderDTO
-    {
+    public function execute(
+        array $marketData,
+        float $quantity,
+        ?float $previousSma50 = null,
+        ?float $previousSma200 = null
+    ): ?array {
         if (count($marketData) < 200) {
-            dump('Not enough data to crossover');
-            return null;
+            return null; // Недостаточно данных для расчета
         }
 
         // Вычисляем SMA(50) и SMA(200)
         $sma50 = array_sum(array_slice($marketData, -50)) / 50;
         $sma200 = array_sum(array_slice($marketData, -200)) / 200;
 
-        print('SMA50: ' . $sma50 . PHP_EOL);
-        print('SMA200: ' . $sma200 . PHP_EOL);
-
-        print('Previous SMA50: ' . $previousSma50 . PHP_EOL);
-        print('Previous SMA200: ' . $previousSma200 . PHP_EOL);
-
+        // Проверяем пересечение вверх (сигнал на покупку)
         if ($previousSma50 !== null && $previousSma200 !== null) {
-            // Проверяем пересечение вверх (сигнал на покупку)
             if ($previousSma50 < $previousSma200 && $sma50 > $sma200) {
-                dump("📈 SMA Crossover UP! (Buy Signal)" . PHP_EOL);
-                return $this->createOrder(OrderSideEnum::Buy, end($marketData));
+                return [
+                    'side' => OrderSideEnum::Buy,
+                    'price' => end($marketData),
+                    'quantity' => $quantity,
+                ];
             }
 
             // Проверяем пересечение вниз (сигнал на продажу)
             if ($previousSma50 > $previousSma200 && $sma50 < $sma200) {
-                dump("📉 SMA Crossover DOWN! (Sell Signal)" . PHP_EOL);
-                return $this->createOrder(OrderSideEnum::Sell, end($marketData));
+                return [
+                    'side' => OrderSideEnum::Sell,
+                    'price' => end($marketData),
+                    'quantity' => $quantity,
+                ];
             }
         }
 
         return null;
-    }
-
-    private function createOrder(OrderSideEnum $side, float $price): OrderDTO
-    {
-        return new OrderDTO(
-            id: 100,
-            userId: 1, // todo: передавать реальные данные
-            assetId: 1,
-            type: OrderTypeEnum::Limit,
-            side: $side,
-            price: $price,
-            quantity: 1,
-            status: OrderStatusEnum::Pending,
-            createdAt: now()->toDateTimeString()
-        );
     }
 }

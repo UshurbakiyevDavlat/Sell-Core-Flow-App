@@ -8,16 +8,14 @@ use Carbon\Carbon;
 readonly class AssetDTO
 {
     public function __construct(
-        public int    $id,
+        public int $id,
         public string $symbol,
         public string $name,
         public string $type,
-        public float  $price,
+        public float $price,
         public Carbon $createdAt,
 
-    )
-    {
-    }
+    ) {}
 
     public static function fromModel(Asset $asset): self
     {
@@ -42,5 +40,4 @@ readonly class AssetDTO
             'createdAt' => $this->createdAt,
         ];
     }
-
 }

@@ -11,9 +11,7 @@ use RuntimeException;
  */
 readonly class MarketDataProviderFactory
 {
-    public function __construct(public array $config = [])
-    {
-    }
+    public function __construct(public array $config = []) {}
 
     public function __call(string $name, array $args)
     {
@@ -41,7 +39,7 @@ readonly class MarketDataProviderFactory
         }
 
         if (! is_a($client, MarketDataProviderInterface::class, true)) {
-            throw new RuntimeException("Market data provider [$provider] must implement " . MarketDataProviderInterface::class);
+            throw new RuntimeException("Market data provider [$provider] must implement ".MarketDataProviderInterface::class);
         }
 
         return new $client($providerConfig['config'] ?? []);

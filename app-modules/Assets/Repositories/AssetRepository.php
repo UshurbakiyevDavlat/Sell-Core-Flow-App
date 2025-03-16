@@ -18,7 +18,7 @@ class AssetRepository
     {
         return Cache::remember("assets_list_page_$perPage", 60, function () use ($perPage) {
             return Asset::query()->paginate($perPage)
-                ->through(fn(Asset $asset) => AssetDTO::fromModel($asset));
+                ->through(fn (Asset $asset) => AssetDTO::fromModel($asset));
         });
     }
 
@@ -34,7 +34,7 @@ class AssetRepository
     public function create(array $data): AssetDTO
     {
         $asset = Asset::query()->create($data);
-        Cache::forget("assets_list_page_10"); //todo что за хардкод
+        Cache::forget('assets_list_page_10'); // todo что за хардкод
 
         return AssetDTO::fromModel($asset);
     }
@@ -42,11 +42,13 @@ class AssetRepository
     public function update(int $id, array $data): ?AssetDTO
     {
         $asset = Asset::query()->find($id);
-        if (!$asset) return null;
+        if (! $asset) {
+            return null;
+        }
 
         $asset->update($data);
         Cache::forget("asset_$id");
-        Cache::forget("assets_list_page_10"); //todo сделать без хардкода
+        Cache::forget('assets_list_page_10'); // todo сделать без хардкода
 
         return AssetDTO::fromModel($asset);
     }
@@ -54,7 +56,9 @@ class AssetRepository
     public function updatePriceBySymbol(string $symbol, float $newPrice): void
     {
         $asset = Asset::query()->where('symbol', $symbol)->first();
-        if (!$asset) return;
+        if (! $asset) {
+            return;
+        }
 
         $asset->update(['price' => $newPrice]);
         Cache::forget("asset_$asset->id");
@@ -63,22 +67,24 @@ class AssetRepository
     public function delete(int $id): bool
     {
         $asset = Asset::query()->find($id);
-        if (!$asset) return false;
+        if (! $asset) {
+            return false;
+        }
 
         $asset->delete();
         Cache::forget("asset_$id");
-        Cache::forget("assets_list_page_10");//todo сделать без хардкода
+        Cache::forget('assets_list_page_10'); // todo сделать без хардкода
 
         return true;
     }
 
     public function getAssetsByIds(array $ids): array
     {
-        return Cache::remember("assets_" . implode('_', $ids), 60, function () use ($ids) {
+        return Cache::remember('assets_'.implode('_', $ids), 60, function () use ($ids) {
             return Asset::query()
                 ->whereIn('id', $ids)
                 ->get()
-                ->map(fn(Asset $asset) => AssetDTO::fromModel($asset))
+                ->map(fn (Asset $asset) => AssetDTO::fromModel($asset))
                 ->toArray();
         });
     }

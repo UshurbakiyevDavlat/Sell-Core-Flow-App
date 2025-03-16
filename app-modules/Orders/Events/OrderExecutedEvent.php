@@ -11,9 +11,7 @@ class OrderExecutedEvent
     use Dispatchable;
     use SerializesModels;
 
-    public function __construct(public OrderDTO $order)
-    {
-    }
+    public function __construct(public OrderDTO $order) {}
 
     public function toArray(): array
     {

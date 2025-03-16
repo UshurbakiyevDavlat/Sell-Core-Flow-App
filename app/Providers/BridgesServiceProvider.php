@@ -13,7 +13,7 @@ class BridgesServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(UserServiceInterface::class, fn(Application $app) => $app->make(UserService::class));
-        $this->app->singleton(AuthBridgeInterface::class, fn(Application $app) => $app->make(AuthBridgeClient::class));
+        $this->app->singleton(UserServiceInterface::class, fn (Application $app) => $app->make(UserService::class));
+        $this->app->singleton(AuthBridgeInterface::class, fn (Application $app) => $app->make(AuthBridgeClient::class));
     }
 }

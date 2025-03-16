@@ -7,7 +7,7 @@ use AppModules\Trades\Models\Trade;
 
 class TradesRepository
 {
-    //todo тут неявный аргумент массива приходит, лучше сделать экшн DTO и передавать его сюда
+    // todo тут неявный аргумент массива приходит, лучше сделать экшн DTO и передавать его сюда
     public function create(array $data): TradesDTO
     {
         $trade = Trade::query()->create($data);
@@ -18,14 +18,14 @@ class TradesRepository
     public function getById(int $id): ?TradesDTO
     {
         $trade = Trade::query()->find($id);
-        if (!$trade) {
+        if (! $trade) {
             return null;
         }
 
         return TradesDTO::fromModel($trade);
     }
 
-    //todo такая же история c аргументом как выше
+    // todo такая же история c аргументом как выше
     public function update(int $id, array $data): bool
     {
         return Trade::query()->where('id', $id)->update($data);

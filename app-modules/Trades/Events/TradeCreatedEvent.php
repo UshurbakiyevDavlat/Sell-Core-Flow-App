@@ -11,9 +11,7 @@ class TradeCreatedEvent
     use Dispatchable;
     use SerializesModels;
 
-    public function __construct(public TradesDTO $tradeDto)
-    {
-    }
+    public function __construct(public TradesDTO $tradeDto) {}
 
     public function toArray(): array
     {

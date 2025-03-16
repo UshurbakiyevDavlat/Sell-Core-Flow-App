@@ -10,6 +10,6 @@ trait HasKeys
     /** @return array<string> */
     public static function keys(): array
     {
-        return array_map(fn(self $enum) => $enum->name, self::cases());
+        return array_map(fn (self $enum) => $enum->name, self::cases());
     }
 }

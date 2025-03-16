@@ -11,12 +11,14 @@ class UserRepository
     public function findByEmail(string $email): ?UserDTO
     {
         $user = User::where('email', $email)->first();
+
         return $user ? UserDTO::fromModel($user) : null;
     }
 
     public function findById(int $userId): ?UserDTO
     {
         $user = User::find($userId);
+
         return $user ? UserDTO::fromModel($user) : null;
     }
 

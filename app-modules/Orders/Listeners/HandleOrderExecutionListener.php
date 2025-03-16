@@ -8,9 +8,7 @@ use AppModules\Orders\Events\OrderExecutedEvent;
 
 class HandleOrderExecutionListener
 {
-    public function __construct(protected BillingService $billingService)
-    {
-    }
+    public function __construct(protected BillingService $billingService) {}
 
     public function handle(OrderExecutedEvent $event): void
     {
@@ -25,4 +23,3 @@ class HandleOrderExecutionListener
         // Здесь ничего не делаем, а прибыль начислим после трейда
     }
 }
-

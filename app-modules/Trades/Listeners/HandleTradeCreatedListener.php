@@ -11,14 +11,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HandleTradeCreatedListener implements ShouldQueue
 {
-    //todo do not forget about bridges, it will reduce complexity
+    // todo do not forget about bridges, it will reduce complexity
     public function __construct(
-        protected TradesService  $tradesService,
+        protected TradesService $tradesService,
         protected BillingService $billingService,
-        protected OrderService   $orderService,
-    )
-    {
-    }
+        protected OrderService $orderService,
+    ) {}
 
     public function handle(TradeCreatedEvent $event): void
     {

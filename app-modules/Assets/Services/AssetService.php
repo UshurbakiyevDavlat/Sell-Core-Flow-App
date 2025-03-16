@@ -2,18 +2,24 @@
 
 namespace AppModules\Assets\Services;
 
+use AppModules\Assets\Concerns\Enums\AssetIntervalEnum;
+use AppModules\Assets\Concerns\Enums\AssetTypeEnum;
 use AppModules\Assets\DTO\AssetDTO;
 use AppModules\Assets\Factories\MarketDataProviderFactory;
 use AppModules\Assets\Repositories\AssetRepository;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
 
+// todo потом решить, что делать с кешем для stock market api
 readonly class AssetService
 {
+    private const int CACHE_TTL = 86400; // 24 часа в секундах
+
     public function __construct(
-        private AssetRepository           $repository,
+        private AssetRepository $repository,
         private MarketDataProviderFactory $providerFactory
     ) {}
 
@@ -64,7 +70,14 @@ readonly class AssetService
         $symbols = $this->repository->getAllSymbols();
 
         foreach ($symbols as $symbol) {
-            $newPrice = $provider->getPrice($symbol);
+            $newPrice = Cache::remember(
+                "asset_price_$symbol",
+                self::CACHE_TTL,
+                function () use ($provider, $symbol) {
+                    return $provider->getPrice($symbol);
+                }
+            );
+
             $this->repository->updatePriceBySymbol($symbol, $newPrice);
 
             Kafka::publish()
@@ -88,10 +101,15 @@ readonly class AssetService
     public function initializeAssets(): void
     {
         $provider = $this->providerFactory->provider();
-        $assets = $provider->getAssetList();
+        $assets = Cache::remember(
+            'asset_list',
+            self::CACHE_TTL,
+            function () use ($provider) {
+                return $provider->getAssetList();
+            });
 
         if (empty($assets)) {
-            throw new Exception("Asset list is empty");
+            throw new Exception('Asset list is empty');
         }
 
         foreach ($assets as $assetData) {
@@ -101,16 +119,32 @@ readonly class AssetService
             $this->repository->create([
                 'symbol' => $assetData['symbol'],
                 'name' => $assetData['name'],
-                'type' => strtolower($assetData['assetType'] ?? 'stock'),
-                'price' => 0, // Цена будет обновлена позже
+                'type' => strtolower($assetData['assetType'] ?? AssetTypeEnum::Stock),
             ]);
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function getHistoricalData(
+        int $assetId,
+        AssetIntervalEnum $interval = AssetIntervalEnum::Daily,
+        int $outputSize = 100
+    ): array {
+        $asset = $this->repository->getById($assetId);
+        if (empty($asset)) {
+            throw new Exception('Asset not found');
+        }
 
-    public function getHistoricalData(string $symbol, string $interval = 'daily', int $outputSize = 100): array
-    {
-        $provider = $this->providerFactory->provider();
-        return $provider->getHistoricalData($symbol, $interval, $outputSize);
+        return Cache::remember(
+            "historical_data_{$asset->symbol}_$interval->value",
+            self::CACHE_TTL,
+            function () use ($asset, $interval, $outputSize) {
+                $provider = $this->providerFactory->provider();
+
+                return $provider->getHistoricalData($asset->symbol, $interval->value, $outputSize);
+            }
+        );
     }
 }

@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
 class Order extends Model
 {
     protected $table = 'orders';
+
     protected $fillable = [
         'user_id',
         'asset_id',

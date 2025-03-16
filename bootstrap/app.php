@@ -11,8 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-    })
+    ->withMiddleware(function (Middleware $middleware) {})
     ->withExceptions(function (Exceptions $exceptions) {
 
         $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $throwable) {

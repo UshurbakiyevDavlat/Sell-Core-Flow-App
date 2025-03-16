@@ -2,7 +2,4 @@
 
 namespace AppModules\Billing\Listeners;
 
-class UpdateBalanceListener
-{
-
-}
+class UpdateBalanceListener {}

@@ -27,14 +27,14 @@ class ExecuteLimitOrdersByPriceUpdate extends Command
                 $assetId = $messageBody['asset_id'] ?? null;
                 $newPrice = $messageBody['price'] ?? null;
 
-                if (!$assetId || !$newPrice) {
+                if (! $assetId || ! $newPrice) {
                     throw new \Exception('AssetId or newPrice missing');
                 }
 
                 $pendingOrders = $orderRepository->getPendingLimitOrdersByAsset($assetId);
-                $pendingOrdersIds = array_map(fn($order) => $order->id, $pendingOrders);
+                $pendingOrdersIds = array_map(fn ($order) => $order->id, $pendingOrders);
 
-                if (!empty($pendingOrdersIds)) {
+                if (! empty($pendingOrdersIds)) {
                     $orderRepository->bulkUpdateStatus($pendingOrdersIds, OrderStatusEnum::Executed->value);
 
                     foreach ($pendingOrders as $pendingOrder) {
@@ -46,4 +46,3 @@ class ExecuteLimitOrdersByPriceUpdate extends Command
             ->consume();
     }
 }
-

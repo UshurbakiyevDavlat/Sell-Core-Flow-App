@@ -48,7 +48,7 @@ class RolePermissionSeeder extends Seeder
                 ->get()
         );
 
-        if (!User::where('email', 'admin@example.com')->exists()) {
+        if (! User::where('email', 'admin@example.com')->exists()) {
             /** @var User $adminUser */
             $adminUser = User::factory()->create([
                 'name' => 'Admin User',

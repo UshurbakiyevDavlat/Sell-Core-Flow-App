@@ -2,7 +2,4 @@
 
 namespace AppModules\Billing\Events;
 
-class BalanceUpdatedEvent
-{
-
-}
+class BalanceUpdatedEvent {}

@@ -9,20 +9,18 @@ use Carbon\Carbon;
 readonly class TradesDTO
 {
     public function __construct(
-        public int             $id,
-        public int             $orderId,
-        public int             $userId,
-        public float           $price,
-        public int             $quantity,
+        public int $id,
+        public int $orderId,
+        public int $userId,
+        public float $price,
+        public int $quantity,
         public TradeStatusEnum $status,
-        public Carbon          $createdAt,
-    )
-    {
-    }
+        public Carbon $createdAt,
+    ) {}
 
     public static function fromModel(?Trade $trade): ?self
     {
-        if (!$trade) {
+        if (! $trade) {
             return null;
         }
 

@@ -12,8 +12,7 @@ class InitializeAssetCommand extends Command
 
     public function __construct(
         private readonly AssetService $assetService,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -22,6 +21,6 @@ class InitializeAssetCommand extends Command
      */
     public function handle(): void
     {
-        $this->assetService->initializeAssets(); //todo перенести в джобу, т.к если будет много ассетов грохнется консоль процесс.
+        $this->assetService->initializeAssets(); // todo перенести в джобу, т.к если будет много ассетов грохнется консоль процесс.
     }
 }

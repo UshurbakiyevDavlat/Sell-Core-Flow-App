@@ -15,6 +15,7 @@ class BillingRepository
     {
         return Cache::remember("billing_balance_$userId", 60, function () use ($userId) {
             $account = BillingAccount::query()->where('user_id', $userId)->first();
+
             return BalanceDTO::fromModel($account);
         });
     }

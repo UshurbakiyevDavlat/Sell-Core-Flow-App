@@ -7,9 +7,7 @@ use AppModules\Auth\Repositories\UserRepository;
 
 class UserService
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
-    }
+    public function __construct(private readonly UserRepository $userRepository) {}
 
     public function getUserById(int $userId): ?UserDTO
     {

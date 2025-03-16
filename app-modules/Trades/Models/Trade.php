@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Trade extends Model
 {
     protected $table = 'trades';
+
     protected $fillable = [
         'order_id',
         'user_id',

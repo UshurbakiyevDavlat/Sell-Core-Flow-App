@@ -24,30 +24,29 @@ class ExecuteLimitPendingOrder extends Command
     public function handle(
         OrderRepository $orderRepository,
         AssetRepository $assetRepository,
-    ): void
-    {
-        Kafka::consumer(['limit_pending_orders']) //todo rename it to limit_pending_orders
+    ): void {
+        Kafka::consumer(['limit_pending_orders']) // todo rename it to limit_pending_orders
             ->withHandler(function (ConsumedMessage $message) use ($orderRepository, $assetRepository) {
                 $messageBody = $message->getBody();
                 $orderId = $messageBody['order_id'] ?? null;
-                if (!$orderId) {
+                if (! $orderId) {
                     throw new ConsumerException('OrderId missing');
                 }
 
                 $order = $orderRepository->getById($orderId);
-                if (!$order) {
+                if (! $order) {
                     throw new RuntimeException('Order not found');
                 }
 
-                $asset = $assetRepository->getById($order->assetId); //todo make bridge and use it instead direct call
-                if (!$asset) {
+                $asset = $assetRepository->getById($order->assetId); // todo make bridge and use it instead direct call
+                if (! $asset) {
                     throw new RuntimeException('Asset not found');
                 }
 
-            if ($asset->price == $order->price) {
-                $orderRepository->update($orderId, ['status' => OrderStatusEnum::Executed->value]);
-                event(new OrderExecutedEvent($order));
-            }
+                if ($asset->price == $order->price) {
+                    $orderRepository->update($orderId, ['status' => OrderStatusEnum::Executed->value]);
+                    event(new OrderExecutedEvent($order));
+                }
             })
             ->build()
             ->consume();

@@ -10,22 +10,20 @@ use AppModules\Orders\Models\Order;
 readonly class OrderDTO
 {
     public function __construct(
-        public int             $id,
-        public int             $userId,
-        public int             $assetId,
-        public OrderTypeEnum   $type,
-        public OrderSideEnum   $side,
-        public ?float          $price,
-        public float           $quantity,
+        public int $id,
+        public int $userId,
+        public int $assetId,
+        public OrderTypeEnum $type,
+        public OrderSideEnum $side,
+        public ?float $price,
+        public float $quantity,
         public OrderStatusEnum $status,
-        public string          $createdAt,
-    )
-    {
-    }
+        public string $createdAt,
+    ) {}
 
     public static function fromModel(?Order $order): ?self
     {
-        if (!$order) {
+        if (! $order) {
             return null;
         }
 

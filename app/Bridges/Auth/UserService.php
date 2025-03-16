@@ -7,7 +7,6 @@ use AppModules\Auth\DTO\UserDTO;
 
 class UserService implements UserServiceInterface
 {
-
     public function getUserById(int $id): ?UserDTO
     {
         return app(\AppModules\Auth\Services\UserService::class)->getUserById($id);

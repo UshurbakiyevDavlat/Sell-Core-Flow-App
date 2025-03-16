@@ -10,11 +10,12 @@ use InvalidArgumentException;
 class AlphaVantageProvider implements MarketDataProviderInterface
 {
     private string $apiKey;
+
     private string $baseUrl;
 
     public function __construct(array $config)
     {
-        $this->apiKey = $config['api_key'] ?? throw new InvalidArgumentException("API Key is required");
+        $this->apiKey = $config['api_key'] ?? throw new InvalidArgumentException('API Key is required');
         $this->baseUrl = $config['base_url'] ?? 'https://www.alphavantage.co/query';
     }
 
@@ -28,7 +29,9 @@ class AlphaVantageProvider implements MarketDataProviderInterface
 
         $assets = [];
         foreach ($lines as $line) {
-            if (empty(trim($line))) continue;
+            if (empty(trim($line))) {
+                continue;
+            }
             $data = str_getcsv($line);
             $assets[] = array_combine($headers, $data);
         }
@@ -38,12 +41,12 @@ class AlphaVantageProvider implements MarketDataProviderInterface
 
     public function getPrice(string $symbol): float
     {
-        //todo для популярных активов можно сделать меньший ttl
+        // todo для популярных активов можно сделать меньший ttl
         return Cache::remember("market_price_$symbol", 300, function () use ($symbol) {
             $url = "$this->baseUrl?function=GLOBAL_QUOTE&symbol=$symbol&apikey=$this->apiKey";
             $response = Http::get($url)->json();
 
-            return (float)($response['Global Quote']['05. price'] ?? 0);
+            return (float) ($response['Global Quote']['05. price'] ?? 0);
         });
     }
 
