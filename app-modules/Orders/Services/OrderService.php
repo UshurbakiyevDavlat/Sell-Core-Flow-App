@@ -4,6 +4,7 @@ namespace AppModules\Orders\Services;
 
 use AppModules\Assets\Repositories\AssetRepository;
 use AppModules\Orders\Concerns\OrderStatusEnum;
+use AppModules\Orders\Concerns\OrderTradeModeEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use AppModules\Orders\DTO\OrderDTO;
 use AppModules\Orders\Events\OrderCanceledEvent;
@@ -46,18 +47,16 @@ readonly class OrderService
                 'price' => $data['price'] ?? null,
                 'quantity' => $data['quantity'],
                 'status' => $data['status'] ?? OrderStatusEnum::Pending,
+                'trade_mod' => $data['trade_mod'] ?? OrderTradeModeEnum::Paper,
             ]);
 
-            if ($order->type == OrderTypeEnum::Limit) {
-                Kafka::publish()
-                    ->onTopic('limit_pending_orders')
-                    ->withBody([
-                        'order_id' => $order->id,
-                        'asset_id' => $order->assetId,
-                        'price' => $order->price,
-                        'side' => $order->side,
-                    ])
-                    ->send();
+            switch ($order->type) {
+                case OrderTypeEnum::Market:
+                    $this->executeMarketOrder($order);
+                    break;
+                case OrderTypeEnum::Limit:
+                    $this->publishOrder($order);
+                    break;
             }
 
             return $order;
@@ -79,35 +78,59 @@ readonly class OrderService
         return true;
     }
 
-    public function executeMarketOrder(int $orderId): bool
+    private function executeMarketOrder(OrderDTO $order): bool
     {
-        $order = $this->repository->getById($orderId);
         if (
-            ! $order
-            || $order->type != OrderTypeEnum::Market
-            || $order->status != OrderStatusEnum::Pending
+            $order->type != OrderTypeEnum::Market
+            ||
+            $order->status != OrderStatusEnum::Pending
         ) {
-            throw new RuntimeException('Fit order not found'); // todo return null, because this is controller's responsibility
+            throw new RuntimeException('Fit order not found');
         }
 
-        // Получаем текущую цену актива
-        $asset = $this->assetRepository->getById($order->assetId); // todo make bridge and use it instead direct call
-        if (! $asset) {
-            throw new RuntimeException('Asset not found'); // todo return null, because this is controller's responsibility
+        if ($order->tradeMode !== OrderTradeModeEnum::Backtest)
+        {
+            // Получаем актив
+            $asset = $this->assetRepository->getById($order->assetId); // todo make bridge and use it instead direct call
+            if (! $asset) {
+                throw new RuntimeException('Asset not found');
+            }
+            $assetPrice = $asset->price;
+        } else {
+            $assetPrice = $order->price;
         }
 
         // Исполняем ордер по текущей цене
-        $updatedOrder = $this->repository->update($orderId, [
-            'price' => $asset->price,
-            'status' => OrderStatusEnum::Executed->value,
-        ]);
+        $updatedOrder = $this->repository->update(
+            $order->id,
+            [
+                'price' => $assetPrice,
+                'status' => OrderStatusEnum::Executed->value,
+            ]
+        );
 
         if (! $updatedOrder) {
-            throw new RuntimeException('Failed to update order'); // todo return null, because this is controller's responsibility
+            throw new RuntimeException('Failed to update order');
         }
 
         event(new OrderExecutedEvent($updatedOrder));
 
         return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function publishOrder(OrderDTO $order): void
+    {
+        Kafka::publish()
+            ->onTopic('limit_pending_orders')
+            ->withBody([
+                'order_id' => $order->id,
+                'asset_id' => $order->assetId,
+                'price' => $order->price,
+                'side' => $order->side,
+            ])
+            ->send();
     }
 }

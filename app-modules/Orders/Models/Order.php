@@ -6,6 +6,7 @@ use AppModules\Assets\Models\Asset;
 use AppModules\Auth\Models\User;
 use AppModules\Orders\Concerns\OrderSideEnum;
 use AppModules\Orders\Concerns\OrderStatusEnum;
+use AppModules\Orders\Concerns\OrderTradeModeEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property float $quantity
  * @property OrderStatusEnum $status
  * @property Carbon $created_at
+ * @property OrderTradeModeEnum $trade_mod
  */
 class Order extends Model
 {
@@ -34,6 +36,7 @@ class Order extends Model
         'price',
         'quantity',
         'status',
+        'trade_mod',
     ];
 
     public function casts(): array
@@ -42,6 +45,7 @@ class Order extends Model
             'type' => OrderTypeEnum::class,
             'side' => OrderSideEnum::class,
             'status' => OrderStatusEnum::class,
+            'trade_mod' => OrderTradeModeEnum::class,
         ];
     }
 

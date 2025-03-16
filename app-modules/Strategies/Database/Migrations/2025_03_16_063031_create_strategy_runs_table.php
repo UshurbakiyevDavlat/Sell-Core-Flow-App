@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('strategy');
             $table->unsignedBigInteger('asset_id');
             $table->decimal('quantity', 18, 8);
+            $table->decimal('price', 16, 2);
             $table->enum('status', ['success', 'failed', 'pending'])->default('pending');
             $table->text('message')->nullable();
             $table->timestamps();

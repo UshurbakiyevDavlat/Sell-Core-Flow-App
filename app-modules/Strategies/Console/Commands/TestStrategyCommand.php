@@ -31,7 +31,7 @@ class TestStrategyCommand extends Command
             $order = $this->strategyService->runStrategy($strategyName, $userId, $assetId, $quantity);
 
             if ($order) {
-                $this->info("✅ Ордер успешно создан: ID #{$order->id}, Цена: {$order->price}, Кол-во: {$order->quantity}");
+                $this->info("✅ Ордер успешно создан: ID #$order->id, Цена: $order->price, Кол-во: $order->quantity");
             } else {
                 $this->warn('❌ Ордер не был создан. Проверьте логи.');
             }

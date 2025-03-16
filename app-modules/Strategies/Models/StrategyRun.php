@@ -17,6 +17,7 @@ class StrategyRun extends Model
         'strategy',
         'asset_id',
         'quantity',
+        'price',
         'status',
         'message',
     ];

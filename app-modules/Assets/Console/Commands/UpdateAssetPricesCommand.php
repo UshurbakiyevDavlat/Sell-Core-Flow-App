@@ -22,6 +22,9 @@ class UpdateAssetPricesCommand extends Command
         $symbols = $this->repository->getAllSymbols();
         $provider = $this->providerFactory->provider();
 
+        // todo хуйня какая-то, переделать так как упираемся в лимиты апи и плюс в n+1 проблему.
+        // todo вытащить за один запрос данные и сделать балк апдейт, вытащить измененные айди
+        // todo и отправлять айди => прайс на вебсокет.
         foreach ($symbols as $symbol) {
             $price = $provider->getPrice($symbol);
             $this->repository->updatePriceBySymbol($symbol, $price);

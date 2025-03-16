@@ -9,11 +9,9 @@ use AppModules\Assets\Factories\MarketDataProviderFactory;
 use AppModules\Assets\Repositories\AssetRepository;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
 
-// todo потом решить, что делать с кешем для stock market api
 readonly class AssetService
 {
     private const int CACHE_TTL = 86400; // 24 часа в секундах
@@ -70,13 +68,7 @@ readonly class AssetService
         $symbols = $this->repository->getAllSymbols();
 
         foreach ($symbols as $symbol) {
-            $newPrice = Cache::remember(
-                "asset_price_$symbol",
-                self::CACHE_TTL,
-                function () use ($provider, $symbol) {
-                    return $provider->getPrice($symbol);
-                }
-            );
+            $newPrice = $provider->getPrice($symbol);
 
             $this->repository->updatePriceBySymbol($symbol, $newPrice);
 
@@ -101,12 +93,7 @@ readonly class AssetService
     public function initializeAssets(): void
     {
         $provider = $this->providerFactory->provider();
-        $assets = Cache::remember(
-            'asset_list',
-            self::CACHE_TTL,
-            function () use ($provider) {
-                return $provider->getAssetList();
-            });
+        $assets = $provider->getAssetList();
 
         if (empty($assets)) {
             throw new Exception('Asset list is empty');
@@ -137,14 +124,8 @@ readonly class AssetService
             throw new Exception('Asset not found');
         }
 
-        return Cache::remember(
-            "historical_data_{$asset->symbol}_$interval->value",
-            self::CACHE_TTL,
-            function () use ($asset, $interval, $outputSize) {
-                $provider = $this->providerFactory->provider();
+        $provider = $this->providerFactory->provider();
 
-                return $provider->getHistoricalData($asset->symbol, $interval->value, $outputSize);
-            }
-        );
+        return $provider->getHistoricalData($asset->symbol, $interval, $outputSize);
     }
 }

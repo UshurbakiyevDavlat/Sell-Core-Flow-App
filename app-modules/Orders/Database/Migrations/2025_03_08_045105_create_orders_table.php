@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('trade_mod')->default('paper');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('asset_id')->comment('Актив')->constrained('assets');
             $table->string('type')->comment('Тип ордера: market or limit');

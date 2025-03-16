@@ -16,38 +16,38 @@ use AppModules\Strategies\Contracts\StrategyInterface;
  */
 class SmaCrossoverStrategy implements StrategyInterface
 {
-    public function execute(
-        array $marketData,
-        float $quantity,
-        ?float $previousSma50 = null,
-        ?float $previousSma200 = null
-    ): ?array {
+    public function execute(array $marketData, float $quantity): ?array
+    {
         if (count($marketData) < 200) {
             return null; // Недостаточно данных для расчета
         }
 
+        // Извлекаем только закрывающиеся цены (`4. close`) в хронологическом порядке
+        $closingPrices = array_map(fn ($data) => (float) $data['4. close'], array_values($marketData));
+
         // Вычисляем SMA(50) и SMA(200)
-        $sma50 = array_sum(array_slice($marketData, -50)) / 50;
-        $sma200 = array_sum(array_slice($marketData, -200)) / 200;
+        $sma50 = array_sum(array_slice($closingPrices, -50)) / 50;
+        $sma200 = array_sum(array_slice($closingPrices, -200)) / 200;
+
+        // Получаем последнюю цену закрытия актива
+        $lastPrice = end($closingPrices);
 
         // Проверяем пересечение вверх (сигнал на покупку)
-        if ($previousSma50 !== null && $previousSma200 !== null) {
-            if ($previousSma50 < $previousSma200 && $sma50 > $sma200) {
-                return [
-                    'side' => OrderSideEnum::Buy,
-                    'price' => end($marketData),
-                    'quantity' => $quantity,
-                ];
-            }
+        if ($sma50 > $sma200) {
+            return [
+                'side' => OrderSideEnum::Buy,
+                'price' => $lastPrice,
+                'quantity' => $quantity,
+            ];
+        }
 
-            // Проверяем пересечение вниз (сигнал на продажу)
-            if ($previousSma50 > $previousSma200 && $sma50 < $sma200) {
-                return [
-                    'side' => OrderSideEnum::Sell,
-                    'price' => end($marketData),
-                    'quantity' => $quantity,
-                ];
-            }
+        // Проверяем пересечение вниз (сигнал на продажу)
+        if ($sma50 < $sma200) {
+            return [
+                'side' => OrderSideEnum::Sell,
+                'price' => $lastPrice,
+                'quantity' => $quantity,
+            ];
         }
 
         return null;

@@ -32,9 +32,10 @@ readonly class OrderController
         $data['user_id'] = Auth::id();
         $data['status'] = OrderStatusEnum::Pending;
 
-        // todo please make resource
+        $order = $this->service->create($data);
+
         return response()->json(
-            new OrderResource($this->service->create($data)),
+            new OrderResource($order),
             201
         );
     }
@@ -46,13 +47,6 @@ readonly class OrderController
         if (! $this->service->cancelOrder($id, $userId)) {
             throw new UnprocessableEntityHttpException('Cannot cancel order');
         }
-
-        return response()->noContent();
-    }
-
-    public function executeMarketOrder(int $id): Response
-    {
-        $this->service->executeMarketOrder($id);
 
         return response()->noContent();
     }

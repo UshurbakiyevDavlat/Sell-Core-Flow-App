@@ -4,6 +4,7 @@ namespace AppModules\Orders\DTO;
 
 use AppModules\Orders\Concerns\OrderSideEnum;
 use AppModules\Orders\Concerns\OrderStatusEnum;
+use AppModules\Orders\Concerns\OrderTradeModeEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use AppModules\Orders\Models\Order;
 
@@ -19,6 +20,7 @@ readonly class OrderDTO
         public float $quantity,
         public OrderStatusEnum $status,
         public string $createdAt,
+        public OrderTradeModeEnum $tradeMode,
     ) {}
 
     public static function fromModel(?Order $order): ?self
@@ -37,6 +39,7 @@ readonly class OrderDTO
             quantity: $order->quantity,
             status: $order->status,
             createdAt: $order->created_at->toDateTimeString(),
+            tradeMode: $order->trade_mod,
         );
     }
 
@@ -52,6 +55,7 @@ readonly class OrderDTO
             'quantity' => $this->quantity,
             'status' => $this->status->value,
             'createdAt' => $this->createdAt,
+            'tradeMode' => $this->tradeMode->value,
         ];
     }
 }

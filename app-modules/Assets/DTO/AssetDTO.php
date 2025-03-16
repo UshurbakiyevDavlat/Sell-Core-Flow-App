@@ -12,7 +12,7 @@ readonly class AssetDTO
         public string $symbol,
         public string $name,
         public string $type,
-        public float $price,
+        public ?float $price,
         public Carbon $createdAt,
 
     ) {}
@@ -24,7 +24,7 @@ readonly class AssetDTO
             symbol: $asset->symbol,
             name: $asset->name,
             type: $asset->type->value,
-            price: $asset->price,
+            price: $asset->price ?? 0.00,
             createdAt: $asset->created_at
         );
     }
