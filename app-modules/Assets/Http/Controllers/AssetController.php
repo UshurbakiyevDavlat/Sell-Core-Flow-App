@@ -37,7 +37,7 @@ readonly class AssetController
     {
         $asset = $this->service->getById($id);
         if (! $asset) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         return response()->json(new AssetResource($asset));

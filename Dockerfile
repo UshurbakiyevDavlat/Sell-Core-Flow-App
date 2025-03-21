@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     librdkafka-dev \
     supervisor \
-    && docker-php-ext-install pdo pdo_pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pcntl \
     && pecl install redis && docker-php-ext-enable redis \
     && pecl install xdebug && docker-php-ext-enable xdebug \
     && pecl install rdkafka && docker-php-ext-enable rdkafka

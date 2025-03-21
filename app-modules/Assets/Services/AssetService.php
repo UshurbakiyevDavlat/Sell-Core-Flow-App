@@ -5,6 +5,7 @@ namespace AppModules\Assets\Services;
 use AppModules\Assets\Concerns\Enums\AssetIntervalEnum;
 use AppModules\Assets\Concerns\Enums\AssetTypeEnum;
 use AppModules\Assets\DTO\AssetDTO;
+use AppModules\Assets\Events\AssetPriceUpdated;
 use AppModules\Assets\Factories\MarketDataProviderFactory;
 use AppModules\Assets\Repositories\AssetRepository;
 use Exception;
@@ -48,6 +49,8 @@ readonly class AssetService
     {
         DB::transaction(function () use ($id, $newPrice) {
             $this->repository->update($id, ['price' => $newPrice]);
+
+            broadcast(new AssetPriceUpdated($id, $newPrice));
 
             Kafka::publish()
                 ->onTopic('asset_price_update')
