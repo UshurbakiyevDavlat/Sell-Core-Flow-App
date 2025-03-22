@@ -32,6 +32,7 @@ class HandleTradeCreatedListener implements ShouldQueue
             if ($tradeOrder->side === OrderSideEnum::Sell) {
                 // Если ордер трейда на продажу, начисляем деньги пользователю
                 $this->billingService->profit($trade->userId, $trade->id);
+                //todo broadcasting
             }
         }
     }

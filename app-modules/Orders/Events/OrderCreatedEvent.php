@@ -5,19 +5,16 @@ namespace AppModules\Orders\Events;
 use AppModules\Orders\DTO\OrderDTO;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
-class OrderExecutedEvent implements ShouldBroadcast
+class OrderCreatedEvent implements ShouldBroadcast
 {
-    use Dispatchable;
-    use SerializesModels;
-
-    public function __construct(public OrderDTO $order) {}
+    public function __construct(
+       public OrderDTO $order,
+    ) {}
 
     public function broadcastOn(): Channel
     {
-        return new Channel('orders');
+        return new Channel('orders'); // Публичный канал
     }
 
     public function broadcastWith(): array
@@ -29,6 +26,6 @@ class OrderExecutedEvent implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'order.executed';
+        return 'order.created';
     }
 }

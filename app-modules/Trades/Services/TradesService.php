@@ -5,6 +5,7 @@ namespace AppModules\Trades\Services;
 use AppModules\Trades\Concerns\Enums\TradeStatusEnum;
 use AppModules\Trades\DTO\TradesDTO;
 use AppModules\Trades\Events\TradeCreatedEvent;
+use AppModules\Trades\Events\TradeExecutedEvent;
 use AppModules\Trades\Repositories\TradesRepository;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -16,7 +17,7 @@ readonly class TradesService
     {
         $tradeDto = $this->repository->create($data);
 
-        event(new TradeCreatedEvent($tradeDto));
+        broadcast(new TradeCreatedEvent($tradeDto));
 
         return $tradeDto;
     }
@@ -27,6 +28,13 @@ readonly class TradesService
 
         if (! $trade || $trade->status != TradeStatusEnum::Pending) {
             throw new UnprocessableEntityHttpException('Pending trade not found');
+        }
+
+        $updated = $this->repository->update($tradeId, ['status' => TradeStatusEnum::Executed->value]);
+
+        if ($updated) {
+            $trade = $this->repository->getById($tradeId);
+            broadcast(new TradeExecutedEvent($trade));
         }
 
         return $this->repository->update($tradeId, ['status' => TradeStatusEnum::Executed->value]);

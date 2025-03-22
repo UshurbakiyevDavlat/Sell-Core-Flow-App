@@ -3,10 +3,12 @@
 namespace AppModules\Trades\Events;
 
 use AppModules\Trades\DTO\TradesDTO;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TradeCreatedEvent
+class TradeCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable;
     use SerializesModels;
@@ -16,5 +18,22 @@ class TradeCreatedEvent
     public function toArray(): array
     {
         return $this->tradeDto->toArray();
+    }
+
+    public function broadcastOn(): Channel
+    {
+        return new Channel('trades');
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'trade' => $this->tradeDto,
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'trade.created';
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Throwable;
 
 readonly class OrderController
 {
@@ -24,6 +25,7 @@ readonly class OrderController
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function store(CreateOrderRequest $request): JsonResponse
     {

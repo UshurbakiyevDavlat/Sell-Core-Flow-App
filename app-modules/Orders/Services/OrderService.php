@@ -8,6 +8,7 @@ use AppModules\Orders\Concerns\OrderTradeModeEnum;
 use AppModules\Orders\Concerns\OrderTypeEnum;
 use AppModules\Orders\DTO\OrderDTO;
 use AppModules\Orders\Events\OrderCanceledEvent;
+use AppModules\Orders\Events\OrderCreatedEvent;
 use AppModules\Orders\Events\OrderExecutedEvent;
 use AppModules\Orders\Repositories\OrderRepository;
 use Exception;
@@ -15,6 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Junges\Kafka\Facades\Kafka;
 use RuntimeException;
+use Throwable;
 
 readonly class OrderService
 {
@@ -35,6 +37,7 @@ readonly class OrderService
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function create(array $data): OrderDTO
     {
@@ -49,6 +52,8 @@ readonly class OrderService
                 'status' => $data['status'] ?? OrderStatusEnum::Pending,
                 'trade_mod' => $data['trade_mode'] ?? OrderTradeModeEnum::Paper,
             ]);
+
+            broadcast(new OrderCreatedEvent($order));
 
             switch ($order->type) {
                 case OrderTypeEnum::Market:
@@ -78,7 +83,7 @@ readonly class OrderService
         return true;
     }
 
-    private function executeMarketOrder(OrderDTO $order): bool
+    private function executeMarketOrder(OrderDTO $order): void
     {
         if (
             $order->type != OrderTypeEnum::Market
@@ -113,8 +118,6 @@ readonly class OrderService
         }
 
         event(new OrderExecutedEvent($updatedOrder));
-
-        return true;
     }
 
     /**
